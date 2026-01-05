@@ -1,6 +1,6 @@
 "use client"
 import { Search, MapPin } from "lucide-react";
-import { Button } from "@repo/ui";
+import { Button } from "@repo/ui/components";
 import { useState } from "react";
 
 export const HeroSection = () => {
