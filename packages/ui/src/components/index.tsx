@@ -176,7 +176,6 @@ export {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-  Sidebar,
   Table,
   TableBody,
   TableCaption,

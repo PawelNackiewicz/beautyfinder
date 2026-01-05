@@ -1,5 +1,4 @@
-import { Button } from "@repo/ui";
-import styles from "./page.module.css";
+import { Button } from "@repo/ui/components";
 import Link from "next/link";
 import { Facebook, Gift, Instagram, Linkedin, User } from "lucide-react";
 import { HeroSection } from "./components/HeroSection";

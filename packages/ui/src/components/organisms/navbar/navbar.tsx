@@ -1,15 +1,30 @@
-"use client";
+'use client'
 import { Search, Menu, X, MapPin, User } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Input, Button } from "@repo/ui";
-import { useState } from "react";
+import { Input, Button } from "@repo/ui/components";
+import { useState, ComponentType, ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export const Navbar = () => {
+interface LinkProps {
+  href: string;
+  className?: string;
+  children: ReactNode;
+  onClick?: () => void;
+}
+
+interface NavbarProps {
+  /**
+   * Component to use for navigation links (e.g., Next.js Link or React Router Link)
+   */
+  LinkComponent: ComponentType<LinkProps>;
+  /**
+   * Current pathname/route
+   */
+  currentPath: string;
+}
+
+export const Navbar = ({ LinkComponent, currentPath }: NavbarProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const pathname = usePathname();
-  const isHomePage = pathname === "/";
+  const isHomePage = currentPath === "/";
 
   return (
     <header
@@ -22,14 +37,14 @@ export const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
+          <LinkComponent href="/" className="flex items-center gap-2 group">
             <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center transition-transform group-hover:scale-105">
               <MapPin className="w-5 h-5 text-primary-foreground" />
             </div>
             <span className="font-heading font-bold text-xl hidden sm:block">
               Salon<span className="text-primary">Finder</span>
             </span>
-          </Link>
+          </LinkComponent>
 
           {/* Desktop Search - hidden on homepage since it has its own search */}
           {!isHomePage && (
@@ -48,13 +63,13 @@ export const Navbar = () => {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-2">
             <Button variant="ghost" asChild>
-              <Link href="/dla-salonow">Dla Salonów</Link>
+              <LinkComponent href="/dla-salonow">Dla Salonów</LinkComponent>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/logowanie">
+              <LinkComponent href="/logowanie">
                 <User className="w-4 h-4" />
                 Zaloguj się
-              </Link>
+              </LinkComponent>
             </Button>
           </nav>
 
@@ -96,18 +111,18 @@ export const Navbar = () => {
               )}
               <div className="flex flex-col gap-2">
                 <Button variant="ghost" className="justify-start" asChild>
-                  <Link
+                  <LinkComponent
                     href="/dla-salonow"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Dla Salonów
-                  </Link>
+                  </LinkComponent>
                 </Button>
                 <Button variant="outline" className="justify-start" asChild>
-                  <Link href="/logowanie" onClick={() => setIsMenuOpen(false)}>
+                  <LinkComponent href="/logowanie" onClick={() => setIsMenuOpen(false)}>
                     <User className="w-4 h-4" />
                     Zaloguj się
-                  </Link>
+                  </LinkComponent>
                 </Button>
               </div>
             </div>

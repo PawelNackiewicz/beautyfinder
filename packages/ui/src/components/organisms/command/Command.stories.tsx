@@ -18,7 +18,7 @@ import {
   PersonIcon,
   RocketIcon,
 } from "@radix-ui/react-icons";
-import { Button } from "@repo/ui";
+import { Button } from "@repo/ui/components";
 
 const meta: Meta<typeof Command> = {
   title: "Organisms/Command",
