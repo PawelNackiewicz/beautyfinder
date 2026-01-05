@@ -1,102 +1,119 @@
-import Image, { type ImageProps } from "next/image";
 import { Button } from "@repo/ui";
 import styles from "./page.module.css";
-
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
-
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
-  return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
+import Link from "next/link";
+import { Facebook, Gift, Instagram, Linkedin, User } from "lucide-react";
+import { HeroSection } from "./components/HeroSection";
+import { CategoryTabs } from "./components/CategoryTabs";
+import CityGrid from "./components/CityGrid";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/web/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.com/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
-        </div>
-        <Button appName="web" className={styles.secondary}>
-          Open alert
-        </Button>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.com?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.com →
-        </a>
-      </footer>
+    <div className="min-h-screen bg-background">
+        <Header />
+        <main>
+          <HeroSection />
+          <CategoryTabs />
+          <CityGrid />
+        </main>
+        <Footer />
     </div>
   );
 }
+
+const Header = () => {
+    return (
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+      <div className="container mx-auto px-4 lg:px-8">
+        <div className="flex items-center justify-between h-16 lg:h-20">
+          <Link href="/" className="flex items-center gap-2">
+            <span className="text-2xl lg:text-3xl font-serif font-bold text-primary">
+              BeautyFinder
+            </span>
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-6">
+            <Link href="/dla-firm">
+              <Button variant="ghost" className="font-medium">
+                Dla firm
+              </Button>
+            </Link>
+            <Link href="/kup-bon">
+              <Button variant="voucher" className="gap-2">
+                <Gift className="w-4 h-4" />
+                Kup Bon
+              </Button>
+            </Link>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <User className="w-5 h-5" />
+            </Button>
+          </nav>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+const Footer = () => {
+  return (
+    <footer className="bg-foreground text-primary-foreground py-16">
+      <div className="container mx-auto px-4 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+          {/* Brand */}
+          <div>
+            <Link href="/" className="text-2xl font-serif font-bold mb-4 inline-block">
+              BeautyFinder
+            </Link>
+            <p className="text-primary-foreground/70 text-sm leading-relaxed">
+              Twoja platforma do odkrywania najlepszych specjalistów beauty w Polsce.
+            </p>
+          </div>
+
+          {/* Links */}
+          <div>
+            <h4 className="font-semibold mb-4">Dla Klientów</h4>
+            <ul className="space-y-2 text-sm text-primary-foreground/70">
+              <li><Link href="/szukaj" className="hover:text-primary-foreground transition-colors">Znajdź salon</Link></li>
+              <li><Link href="/kup-bon" className="hover:text-primary-foreground transition-colors">Kup bon podarunkowy</Link></li>
+              <li><Link href="/jak-to-dziala" className="hover:text-primary-foreground transition-colors">Jak to działa</Link></li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-semibold mb-4">Dla Firm</h4>
+            <ul className="space-y-2 text-sm text-primary-foreground/70">
+              <li><Link href="/dla-firm" className="hover:text-primary-foreground transition-colors">Dołącz do nas</Link></li>
+              <li><Link href="/cennik" className="hover:text-primary-foreground transition-colors">Cennik</Link></li>
+              <li><Link href="/kontakt" className="hover:text-primary-foreground transition-colors">Kontakt</Link></li>
+            </ul>
+          </div>
+
+          {/* Social */}
+          <div>
+            <h4 className="font-semibold mb-4">Obserwuj nas</h4>
+            <div className="flex gap-4">
+              <a href="#" className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all">
+                <Instagram className="w-5 h-5" />
+              </a>
+              <a href="#" className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all">
+                <Facebook className="w-5 h-5" />
+              </a>
+              <a href="#" className="w-10 h-10 rounded-full bg-primary-foreground/10 flex items-center justify-center hover:bg-primary hover:text-primary-foreground transition-all">
+                <Linkedin className="w-5 h-5" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-primary-foreground/20 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-primary-foreground/60">
+            © 2024 BeautyFinder. Wszelkie prawa zastrzeżone.
+          </p>
+          <div className="flex gap-6 text-sm text-primary-foreground/60">
+            <Link href="/regulamin" className="hover:text-primary-foreground transition-colors">Regulamin</Link>
+            <Link href="/prywatnosc" className="hover:text-primary-foreground transition-colors">Polityka prywatności</Link>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+};
