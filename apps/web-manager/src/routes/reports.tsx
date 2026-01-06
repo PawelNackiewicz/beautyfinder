@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { DashboardLayout, Button, PageHeader } from "@/components";
+import { Button, PageHeader } from "@repo/ui/components";
+import { DashboardLayout } from "@/components";
 import {
   Download,
   TrendingUp,

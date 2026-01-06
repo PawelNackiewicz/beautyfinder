@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { DashboardLayout, Button, PageHeader } from "@/components";
+import { Button, PageHeader } from "@repo/ui/components";
 import {
   Plus,
   Mail,
@@ -10,6 +10,7 @@ import {
   User,
 } from "lucide-react";
 import { cn } from "@repo/ui/lib/utils";
+import { DashboardLayout } from "@/components";
 
 export const Route = createFileRoute("/employees")({
   component: Employees,

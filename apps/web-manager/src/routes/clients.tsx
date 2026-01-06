@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { DashboardLayout, Button, Input, PageHeader } from "@/components";
+import { Button, Input, PageHeader } from "@repo/ui/components";
 import { Plus, Search, Phone, Calendar, MoreHorizontal } from "lucide-react";
 import { cn } from "@repo/ui/lib/utils";
+import { DashboardLayout } from "@/components";
 
 export const Route = createFileRoute("/clients")({
   component: Clients,
