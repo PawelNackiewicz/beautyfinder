@@ -4,6 +4,7 @@ import { Facebook, Gift, Instagram, Linkedin, User } from "lucide-react";
 import { HeroSection } from "./components/HeroSection";
 import { CategoryTabs } from "./components/CategoryTabs";
 import CityGrid from "./components/CityGrid";
+import ListView from "./components/ListView";
 
 export default function Home() {
   return (
@@ -13,44 +14,43 @@ export default function Home() {
           <HeroSection />
           <CategoryTabs />
           <CityGrid />
+          <ListView />
         </main>
         <Footer />
     </div>
   );
 }
 
-const Header = () => {
-    return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
-      <div className="container mx-auto px-4 lg:px-8">
-        <div className="flex items-center justify-between h-16 lg:h-20">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="text-2xl lg:text-3xl font-serif font-bold text-primary">
-              BeautyFinder
-            </span>
-          </Link>
+const Header = () => (
+  <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
+    <div className="container mx-auto px-4 lg:px-8">
+      <div className="flex items-center justify-between h-16 lg:h-20">
+        <Link href="/" className="flex items-center gap-2">
+          <span className="text-2xl lg:text-3xl font-serif font-bold text-primary">
+            BeautyFinder
+          </span>
+        </Link>
 
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/dla-firm">
-              <Button variant="ghost" className="font-medium">
-                Dla firm
-              </Button>
-            </Link>
-            <Link href="/kup-bon">
-              <Button variant="voucher" className="gap-2">
-                <Gift className="w-4 h-4" />
-                Kup Bon
-              </Button>
-            </Link>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <User className="w-5 h-5" />
+        <nav className="hidden md:flex items-center gap-2">
+          <Link href={process.env.WEB_MANAGER_APP_URL ?? "#"}>
+            <Button variant="outline" className="font-medium">
+              Dla firm
             </Button>
-          </nav>
-        </div>
+          </Link>
+          <Link href="/kup-bon">
+            <Button className="gap-2">
+              <Gift className="w-4 h-4" />
+              Kup Bon
+            </Button>
+          </Link>
+          <Button variant="outline" size="icon" className="rounded-full">
+            <User className="w-5 h-5" />
+          </Button>
+        </nav>
       </div>
-    </header>
-  );
-}
+    </div>
+  </header>
+)
 
 const Footer = () => {
   return (

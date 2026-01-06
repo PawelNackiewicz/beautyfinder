@@ -32,10 +32,10 @@ export const CategoryTabs = () => {
               <button
                 key={category.id}
                 onClick={() => handleCategoryClick(category.id)}
-                className="group flex flex-col items-center gap-4 p-6 lg:p-8 bg-secondary rounded-2xl border border-border hover:border-primary hover:bg-primary/5 transition-all duration-300 hover:shadow-card animate-fade-up"
+                className="group flex flex-col items-center gap-4 p-6 lg:p-8 rounded-2xl border border-border hover:border-primary hover:bg-primary/5 transition-all duration-300 hover:shadow-card animate-fade-up"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all duration-300">
+                <div className="w-16 h-16 lg:w-20 lg:h-20 rounded-2xl flex items-center justify-center group-hover:bg-primary/50 group-hover:scale-110 transition-all duration-300">
                   <Icon className="w-8 h-8 lg:w-10 lg:h-10 text-primary group-hover:text-primary-foreground transition-colors" />
                 </div>
                 <span className="font-medium text-foreground text-center text-sm lg:text-base">
