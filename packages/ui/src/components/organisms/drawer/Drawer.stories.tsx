@@ -9,7 +9,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "./Drawer";
-import { Button } from "@repo/ui";
+import { Button } from "@repo/ui/components";
 
 const meta = {
   title: "Organisms/Drawer",

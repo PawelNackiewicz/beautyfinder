@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./Dialog";
-import { Button, Input, Label } from "@repo/ui";
+import { Button, Input, Label } from "@repo/ui/components";
 
 const meta: Meta<typeof Dialog> = {
   title: "Organisms/Dialog",

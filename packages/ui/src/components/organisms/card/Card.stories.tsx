@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "./Card";
-import { Button, Badge } from "@repo/ui";
+import { Button, Badge } from "@repo/ui/components";
 
 const meta: Meta<typeof Card> = {
   title: "Organisms/Card",

@@ -12,12 +12,12 @@ import {
   CommandShortcut,
 } from "./Command";
 import {
-  CalendarIcon,
-  FaceIcon,
-  GearIcon,
-  PersonIcon,
-  RocketIcon,
-} from "@radix-ui/react-icons";
+  Calendar,
+  Smile,
+  Settings,
+  User,
+  Rocket,
+} from "lucide-react";
 import { Button } from "@repo/ui/components";
 
 const meta: Meta<typeof Command> = {
@@ -40,27 +40,27 @@ export const Default: Story = {
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Suggestions">
           <CommandItem>
-            <CalendarIcon className="mr-2" />
+            <Calendar className="mr-2" />
             <span>Calendar</span>
           </CommandItem>
           <CommandItem>
-            <FaceIcon className="mr-2" />
+            <Smile className="mr-2" />
             <span>Search Emoji</span>
           </CommandItem>
           <CommandItem>
-            <RocketIcon className="mr-2" />
+            <Rocket className="mr-2" />
             <span>Launch</span>
           </CommandItem>
         </CommandGroup>
         <CommandSeparator />
         <CommandGroup heading="Settings">
           <CommandItem>
-            <PersonIcon className="mr-2" />
+            <User className="mr-2" />
             <span>Profile</span>
             <CommandShortcut>⌘P</CommandShortcut>
           </CommandItem>
           <CommandItem>
-            <GearIcon className="mr-2" />
+            <Settings className="mr-2" />
             <span>Settings</span>
             <CommandShortcut>⌘S</CommandShortcut>
           </CommandItem>
