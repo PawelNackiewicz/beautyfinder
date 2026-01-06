@@ -32,7 +32,7 @@ const Header = () => (
         </Link>
 
         <nav className="hidden md:flex items-center gap-2">
-          <Link href={process.env.WEB_MANAGER_APP_URL ?? "#"}>
+          <Link href={process.env.NEXT_PUBLIC_WEB_MANAGER_APP_URL ?? "#"}>
             <Button variant="outline" className="font-medium">
               Dla firm
             </Button>
@@ -108,7 +108,7 @@ const Footer = () => {
             © 2024 BeautyFinder. Wszelkie prawa zastrzeżone.
           </p>
           <p>
-            {process.env.WEB_MANAGER_APP_URL ?? "Failed env variable"}
+            {process.env.NEXT_PUBLIC_WEB_MANAGER_APP_URL ?? "Failed env variable"}
           </p>
           <div className="flex gap-6 text-sm text-primary-foreground/60">
             <Link href="/regulamin" className="hover:text-primary-foreground transition-colors">Regulamin</Link>
