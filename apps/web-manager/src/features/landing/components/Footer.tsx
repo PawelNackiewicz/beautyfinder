@@ -74,9 +74,6 @@ export const Footer = () => {
             >
               Polityka prywatności
             </a>
-            <p>
-              {process.env.WEB_MANAGER_APP_URL ?? "Failed env variable"}
-            </p>
             <a
               href="#"
               className="text-sm text-muted-foreground hover:text-primary transition-colors"
