@@ -4,7 +4,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from "@repo/ui";
+} from "@repo/ui/components";
 
 const meta = {
   title: "Molecules/Accordion",

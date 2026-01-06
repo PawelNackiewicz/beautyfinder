@@ -16,7 +16,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "./DropdownMenu";
-import { Button } from "@repo/ui";
+import { Button } from "@repo/ui/components";
 
 const meta: Meta<typeof DropdownMenu> = {
   title: "Organisms/DropdownMenu",

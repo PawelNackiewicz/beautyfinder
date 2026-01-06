@@ -10,7 +10,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "./AlertDialog";
-import { Button } from "@repo/ui";
+import { Button } from "@repo/ui/components";
 
 const meta: Meta<typeof AlertDialog> = {
   title: "Organisms/AlertDialog",

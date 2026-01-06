@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "./Table";
-import { Badge } from "@repo/ui";
+import { Badge } from "@repo/ui/components";
 
 const meta: Meta<typeof Table> = {
   title: "Organisms/Table",

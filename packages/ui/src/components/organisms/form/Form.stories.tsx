@@ -11,7 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "./Form";
-import { Input, Button } from "@repo/ui";
+import { Input, Button } from "@repo/ui/components";
 
 const meta: Meta<typeof Form> = {
   title: "Organisms/Form",

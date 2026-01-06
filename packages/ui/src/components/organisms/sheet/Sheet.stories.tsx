@@ -9,7 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "./Sheet";
-import { Button, Input, Label } from "@repo/ui";
+import { Button, Input, Label } from "@repo/ui/components";
 
 const meta: Meta<typeof Sheet> = {
   title: "Organisms/Sheet",

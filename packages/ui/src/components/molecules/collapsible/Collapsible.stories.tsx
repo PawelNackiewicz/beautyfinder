@@ -6,7 +6,7 @@ import {
   Collapsible,
   CollapsibleTrigger,
   CollapsibleContent,
-} from "@repo/ui";
+} from "@repo/ui/components";
 
 const meta: Meta<typeof Collapsible> = {
   title: "Molecules/Collapsible",
