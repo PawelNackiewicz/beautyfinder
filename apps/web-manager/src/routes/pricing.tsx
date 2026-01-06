@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button, Badge } from "@/components";
+import { Button, Badge } from "@repo/ui/components";
 
 export const Route = createFileRoute("/pricing")({
   component: PricingPage,

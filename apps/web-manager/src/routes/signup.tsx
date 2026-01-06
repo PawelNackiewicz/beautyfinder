@@ -11,7 +11,7 @@ import {
   Button,
   Input,
   Label,
-} from "@/components";
+} from "@repo/ui/components";
 import { Sparkles } from "lucide-react";
 
 export const Route = createFileRoute("/signup")({

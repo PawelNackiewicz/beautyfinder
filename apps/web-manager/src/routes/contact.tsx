@@ -10,7 +10,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components";
+} from "@repo/ui/components";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/contact")({

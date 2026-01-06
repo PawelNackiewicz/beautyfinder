@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Button } from "@/components";
+import { Button } from "@repo/ui/components";
 
 export const Route = createFileRoute("/functions")({
   component: FunctionsPage,

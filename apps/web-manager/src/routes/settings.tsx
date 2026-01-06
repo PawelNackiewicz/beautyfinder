@@ -5,8 +5,8 @@ import {
   Label,
   Switch,
   PageHeader,
-  DashboardLayout,
-} from "@/components";
+} from "@repo/ui/components";
+import { DashboardLayout } from "@/components";
 import { Building2, Clock, CreditCard, Bell, Save, Upload } from "lucide-react";
 
 export const Route = createFileRoute("/settings")({
