@@ -156,7 +156,6 @@ export {
   FormLabel,
   FormMessage,
   useFormField,
-  Map,
   Navbar,
   Select,
   SelectContent,

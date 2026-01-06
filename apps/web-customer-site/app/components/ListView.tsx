@@ -141,7 +141,7 @@ const ListingView = () => {
                       <i className="fa-solid fa-location-crosshairs text-3xl text-[#2D5A27]"></i>
                     </div>
                     <p className="text-gray-600 font-medium">Interaktywna Mapa</p>
-                    <p className="text-xs text-gray-400 mt-1">Ładowanie markerów dla {salons.length} salonów...</p>
+                    <p className="text-xs text-gray-400 mt-1">Ładowanie markerów dla {MOCK_SALONS.length} salonów...</p>
                   </div>
                   {/* Visual Map Mockup: Green Markers */}
                   {MOCK_SALONS.map((s, idx) => (

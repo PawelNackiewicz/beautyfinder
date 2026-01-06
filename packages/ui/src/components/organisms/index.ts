@@ -165,6 +165,4 @@ export {
 
 export { Toaster } from "./sonner/Sonner";
 
-export { default as Map } from "./map/map";
-
 export { Navbar } from "./navbar/navbar";

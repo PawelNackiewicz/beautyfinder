@@ -9,7 +9,6 @@ export const HeroSection = () => {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    onSearch(service, city);
   };
 
   return (
