@@ -1,5 +1,6 @@
 "use client";
 import { Scissors, Sparkles, Eye, Heart, Hand, User } from "lucide-react";
+import Link from "next/link";
 
 const categories = [
   { id: "fryzjer", name: "Fryzjer", icon: Scissors },
@@ -12,8 +13,7 @@ const categories = [
 
 export const CategoryTabs = () => {
 
-  const handleCategoryClick = (categoryId: string) => {
-  };
+
 
   return (
     <section className="py-16 lg:py-24 bg-background">
@@ -29,9 +29,9 @@ export const CategoryTabs = () => {
           {categories.map((category, index) => {
             const Icon = category.icon;
             return (
-              <button
+              <Link
                 key={category.id}
-                onClick={() => handleCategoryClick(category.id)}
+                href={`/${category.id}`}
                 className="group flex flex-col items-center gap-4 p-6 lg:p-8 rounded-2xl border border-border hover:border-primary hover:bg-primary/5 transition-all duration-300 hover:shadow-card animate-fade-up"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
@@ -41,7 +41,7 @@ export const CategoryTabs = () => {
                 <span className="font-medium text-foreground text-center text-sm lg:text-base">
                   {category.name}
                 </span>
-              </button>
+              </Link>
             );
           })}
         </div>
