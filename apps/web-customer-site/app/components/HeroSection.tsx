@@ -22,10 +22,9 @@ export const HeroSection = () => {
           muted 
           playsInline
           className="w-full h-full object-cover scale-105" // slight scale to prevent edge flickering
-          poster="https://images.pexels.com/photos/3985338/pexels-photo-3985338.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
         >
           <source 
-            src="https://player.vimeo.com/external/453162796.sd.mp4?s=34a5840d4a9657b960a0c4f800885145df052a6a&profile_id=164&oauth2_token_id=57447761" 
+            src="/hero_video.mp4" 
             type="video/mp4" 
           />
           Twoja przeglądarka nie wspiera formatu wideo.
