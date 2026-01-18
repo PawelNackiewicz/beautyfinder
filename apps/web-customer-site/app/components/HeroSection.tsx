@@ -1,6 +1,6 @@
 "use client"
 import { Search, MapPin } from "lucide-react";
-import { Button } from "@repo/ui/components";
+import { Button, Input, Typography } from "@repo/ui/components";
 import { FormEvent, useState } from "react";
 
 export const HeroSection = () => {
@@ -12,7 +12,7 @@ export const HeroSection = () => {
   };
 
   return (
-<section className="relative h-[85vh] flex items-center justify-center overflow-hidden">
+    <section className="relative h-[85vh] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-black/45 z-10"></div>
         
@@ -32,47 +32,55 @@ export const HeroSection = () => {
         </video>
       </div>
 
-      <div className="relative z-20 text-center px-4 w-full max-w-4xl">
-        <h1 className="text-4xl md:text-7xl font-bold text-white mb-8 drop-shadow-2xl tracking-tight">
-          Twoje piękno <br className="hidden md:block" /> 
-          <span className="text-white/90 font-light italic">w dobrych rękach.</span>
-        </h1>
+      <div className="relative z-20 text-center px-4 w-full max-w-4xl flex flex-col items-center">
+        <div className="mb-8 drop-shadow-2xl">
+          <Typography variant="h1" className="text-white tracking-tight">
+            Twoje piękno <br className="hidden md:block" /> 
+            <span className="text-white/90 font-light italic">w dobrych rękach.</span>
+          </Typography>
+        </div>
 
         <form 
           onSubmit={handleSubmit}
-          className="bg-white/95 backdrop-blur-md p-2 rounded-2xl md:rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 max-w-3xl mx-auto"
+          className="bg-background/95 backdrop-blur-md p-2 rounded-2xl md:rounded-full shadow-2xl flex flex-col md:flex-row items-center gap-2 max-w-3xl w-full mx-auto"
         >
-          <div className="flex-1 flex items-center gap-3 px-6 py-4 border-b md:border-b-0 md:border-r border-gray-100 w-full">
-            <i className="fa-solid fa-magnifying-glass text-[#2D5A27]"></i>
-            <input 
+          <div className="flex-1 flex items-center gap-3 px-6 py-2 border-b md:border-b-0 md:border-r border-gray-100 w-full">
+            <Search className="text-primary size-5" />
+            <Input 
               type="text" 
               placeholder="Usługa (np. Fryzjer, Masaż)" 
-              className="w-full focus:outline-none text-gray-800 bg-transparent placeholder-gray-400 font-medium"
+              className="border-none shadow-none focus-visible:ring-0 px-0 h-auto text-base placeholder:text-muted-foreground bg-transparent"
               value={service}
               onChange={(e) => setService(e.target.value)}
             />
           </div>
-          <div className="flex-1 flex items-center gap-3 px-6 py-4 w-full">
-            <i className="fa-solid fa-location-dot text-[#2D5A27]"></i>
-            <input 
+          <div className="flex-1 flex items-center gap-3 px-6 py-2 w-full">
+            <MapPin className="text-primary size-5" />
+             <Input 
               type="text" 
               placeholder="Miasto" 
-              className="w-full focus:outline-none text-gray-800 bg-transparent placeholder-gray-400 font-medium"
+              className="border-none shadow-none focus-visible:ring-0 px-0 h-auto text-base placeholder:text-muted-foreground bg-transparent"
               value={city}
               onChange={(e) => setCity(e.target.value)}
             />
           </div>
-          <button 
+          <Button 
             type="submit"
-            className="bg-[#2D5A27] text-white px-10 py-4 rounded-xl md:rounded-full font-bold hover:bg-[#23471e] transition-all w-full md:w-auto shadow-lg active:scale-95"
+            variant="default"
+            className="w-full md:w-auto rounded-xl md:rounded-full"
           >
             Szukaj
-          </button>
+          </Button>
         </form>
         
-        <p className="text-white/80 mt-6 text-sm font-medium hidden md:block">
-          Popularne: <span className="underline cursor-pointer ml-1">Manicure</span>, <span className="underline cursor-pointer ml-1">Botoks</span>, <span className="underline cursor-pointer ml-1">Strzyżenie męskie</span>
-        </p>
+        <div className="mt-6 hidden md:block">
+           <Typography variant="small" className="text-white/80 font-medium">
+            Popularne: 
+            <Button variant="link" className="text-white/80 hover:text-white px-1 h-auto font-normal underline decoration-1 underline-offset-4">Manicure</Button>, 
+            <Button variant="link" className="text-white/80 hover:text-white px-1 h-auto font-normal underline decoration-1 underline-offset-4">Botoks</Button>, 
+            <Button variant="link" className="text-white/80 hover:text-white px-1 h-auto font-normal underline decoration-1 underline-offset-4">Strzyżenie męskie</Button>
+          </Typography>
+        </div>
       </div>
     </section>
   );

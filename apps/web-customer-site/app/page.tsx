@@ -107,9 +107,6 @@ const Footer = () => {
           <p className="text-sm text-primary-foreground/60">
             © 2024 BeautyFinder. Wszelkie prawa zastrzeżone.
           </p>
-          <p>
-            {process.env.NEXT_PUBLIC_WEB_MANAGER_APP_URL ?? "Failed env variable"}
-          </p>
           <div className="flex gap-6 text-sm text-primary-foreground/60">
             <Link href="/regulamin" className="hover:text-primary-foreground transition-colors">Regulamin</Link>
             <Link href="/prywatnosc" className="hover:text-primary-foreground transition-colors">Polityka prywatności</Link>

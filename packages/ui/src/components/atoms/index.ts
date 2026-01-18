@@ -8,3 +8,4 @@ export { Separator } from "./separator/Separator";
 export { Skeleton } from "./skeleton/Skeleton";
 export { Spinner } from "./spinner/Spinner";
 export { Badge, badgeVariants } from "./badge/Badge";
+export { Typography, typographyVariants } from "./typography/Typography";
