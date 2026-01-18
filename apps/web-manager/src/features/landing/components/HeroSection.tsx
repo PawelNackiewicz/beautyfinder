@@ -7,7 +7,7 @@ import heroDashboard from "@/assets/hero-dashboard.jpg";
 export const HeroSection = () => {
   return (
     <section className="relative min-h-screen bg-gradient-hero overflow-hidden pt-24 pb-16">
-      {/* Background decorative elements */}
+    {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
         <div className="absolute top-1/2 -left-24 w-64 h-64 bg-accent/10 rounded-full blur-3xl" />

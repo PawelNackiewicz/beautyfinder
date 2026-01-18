@@ -12,6 +12,7 @@ export {
   Spinner,
   Switch,
   Textarea,
+  Typography
 } from "./atoms";
 
 // Molecules
