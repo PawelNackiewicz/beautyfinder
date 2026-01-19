@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { SalonService } from './salon.service';
 
 @Controller('salons')
@@ -8,5 +8,10 @@ export class SalonController {
   @Get()
   findAll() {
     return this.salonService.findAll();
+  }
+
+  @Get('premium')
+  getPremiumSalons(@Query('location') location?: string) {
+    return this.salonService.getPremiumSalons(location);
   }
 }
