@@ -4,6 +4,6 @@
     "outDir": "dist",
     "baseUrl": ".",
   },
-  "include": ["src"],
+  "include": ["src", "../../apps/web-customer-site/app/components/SalonMap.tsx"],
   "exclude": ["node_modules", "dist"]
 }

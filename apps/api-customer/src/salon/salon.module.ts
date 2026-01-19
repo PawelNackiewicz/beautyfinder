@@ -8,3 +8,4 @@ import { SalonService } from './salon.service';
   providers: [SalonService],
 })
 export class SalonModule {}
+
