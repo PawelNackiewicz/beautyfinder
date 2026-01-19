@@ -1,4 +1,3 @@
-"use client"
 import React from 'react';
 import { SALONS, Salon, SERVICES } from '../lib/mockData';
 import Link from 'next/link';
