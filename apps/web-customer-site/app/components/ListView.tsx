@@ -2,19 +2,23 @@ import React from 'react';
 import { SALONS, Salon, SERVICES } from '../lib/mockData';
 import Link from 'next/link';
 import { Badge, Button, Card, CardContent, CardTitle, CardDescription, Tabs, TabsList, TabsTrigger, TabsContent } from '@repo/ui/components';
+import { SalonMap } from './SalonMap';
 
 interface ListViewProps {
   salons?: Salon[];
+  mapSalons?: Salon[];
   title?: string;
   subtitle?: string;
 }
 
 const ListingView = ({ 
   salons = SALONS, 
+  mapSalons, 
   title = "Najlepsze salony dla Ciebie",
   subtitle 
 }: ListViewProps) => {
   const displaySubtitle = subtitle || `Odkryj ${salons.length} polecanych miejsc w Twojej okolicy`;
+  const salonsForMap = mapSalons || salons;
 
   return (
     <section id="listing" className="py-16 bg-gray-50 min-h-screen">
@@ -48,7 +52,6 @@ const ListingView = ({
             
             <TabsContent value="map" className="mt-0">
                 <div className="flex flex-col lg:flex-row h-[700px] bg-white rounded-3xl overflow-hidden shadow-xl border border-gray-100">
-                    {/* Left Sidebar List */}
                     <div className="w-full lg:w-1/3 overflow-y-auto custom-scrollbar p-6 bg-white border-r border-gray-100">
                     <div className="space-y-6">
                         {salons.map(salon => (
@@ -70,31 +73,14 @@ const ListingView = ({
                         ))}
                     </div>
                     </div>
-                    {/* Right Map Placeholder */}
-                    <div className="flex-1 bg-gray-200 relative">
-                        <div className="absolute inset-0 flex items-center justify-center bg-[#f0f4f0]">
-                            <div className="text-center">
-                                <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
-                                <i className="fa-solid fa-location-crosshairs text-3xl text-[#2D5A27]"></i>
-                                </div>
-                                <p className="text-gray-600 font-medium">Interaktywna Mapa</p>
-                                <p className="text-xs text-gray-400 mt-1">Ładowanie markerów dla {salons.length} salonów...</p>
-                            </div>
-                            {/* Visual Map Mockup: Green Markers */}
-                            {salons.map((s, idx) => (
-                                <div 
-                                key={s.id} 
-                                className="absolute w-8 h-8 bg-[#2D5A27] text-white rounded-full border-2 border-white flex items-center justify-center shadow-lg animate-bounce"
-                                style={{ 
-                                    top: `${20 + (idx * 15)}%`, 
-                                    left: `${20 + (idx * 12)}%`,
-                                    animationDelay: `${idx * 0.2}s`
-                                }}
-                                >
-                                <i className="fa-solid fa-spa text-xs"></i>
-                                </div>
-                            ))}
-                        </div>
+                    {/* Right Map */}
+                    <div className="flex-1 relative">
+                        <SalonMap 
+                          salons={salonsForMap}
+                          zoom={6} 
+                          center={[52.0693, 19.4803]}
+                          className="rounded-r-3xl"
+                        />
                     </div>
                 </div>
             </TabsContent>

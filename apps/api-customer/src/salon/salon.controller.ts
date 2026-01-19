@@ -14,4 +14,9 @@ export class SalonController {
   getPremiumSalons(@Query('location') location?: string) {
     return this.salonService.getPremiumSalons(location);
   }
+
+  @Get('map')
+  getMapSalons(@Query('location') location?: string) {
+    return this.salonService.getMapSalons(location);
+  }
 }

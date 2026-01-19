@@ -12,6 +12,22 @@ export interface Salon {
   reviewCount: number;
 }
 
+
+export interface MapSalon {
+  id: string;
+  slug: string;
+  name: string;
+  category: string;
+  rating: number;
+  reviews: number;
+  location: string;
+  imageUrl: string;
+  coordinates: {
+    lat: number;
+    lng: number;
+  };
+}
+
 @Injectable()
 export class SalonService {
   private readonly salons: Salon[] = [
@@ -211,5 +227,51 @@ export class SalonService {
 
     // Return top 10
     return premiumSalons.slice(0, 10);
+  }
+
+  getMapSalons(location?: string): MapSalon[] {
+    const categories = ['fryzjer', 'paznokcie', 'makijaz', 'kosmetyczka', 'masaz', 'barber'];
+    // Central Poland cities
+    const cities = ['Warszawa', 'Łódź', 'Radom', 'Płock', 'Skierniewice', 'Piaseczno', 'Pruszków', 'Legionowo'];
+
+    const salonNames = [
+      'Studio Urody Glow', 'Bella Beauty', 'Instytut Piękna', 'Beauty Lounge', 'Spa & Wellness', 
+      'Barber Shop', 'Nail Bar', 'MakeUp Studio', 'Estetica', 'Cosmetology Center',
+      'Golden Hands', 'Diamond Spa', 'Pure Beauty', 'Urban Retreat', 'Velvet Touch',
+      'Elite Grooming', 'The Man Cave', 'Look Good', 'Shine Bright', 'Modern Cuts'
+    ];
+
+    const count = 50;
+    const salons: MapSalon[] = [];
+
+    for (let i = 0; i < count; i++) {
+        // Central Poland bounds (approx. covering Warsaw, Lodz and surrounding areas)
+        // Lat: 51.5 - 52.5
+        // Lng: 19.5 - 21.5
+        const lat = 51.5 + Math.random() * (52.5 - 51.5);
+        const lng = 19.5 + Math.random() * (21.5 - 19.5);
+
+        const category = categories[Math.floor(Math.random() * categories.length)];
+        const city = cities[Math.floor(Math.random() * cities.length)];
+        const nameBase = salonNames[Math.floor(Math.random() * salonNames.length)];
+        const id = `mock-${i + 1}`;
+
+        salons.push({
+            id,
+            slug: `salon-${id}`,
+            name: `${nameBase} ${i + 1}`,
+            category,
+            rating: Number((3.5 + Math.random() * 1.5).toFixed(1)),
+            reviews: Math.floor(Math.random() * 500) + 10,
+            location: `${city}, ul. Losowa ${Math.floor(Math.random() * 100)}`,
+            imageUrl: `https://picsum.photos/seed/${id}/400/300`,
+            coordinates: {
+                lat,
+                lng
+            }
+        });
+    }
+    
+    return salons;
   }
 }

@@ -5,11 +5,14 @@ import { HeroSection } from "./components/HeroSection";
 import { CategoryTabs } from "./components/CategoryTabs";
 import CityGrid from "./components/CityGrid";
 import ListView from "./components/ListView";
-import { fetchPremiumSalons } from "./lib/api-client";
+import { fetchMapSalons, fetchPremiumSalons } from "./lib/api-client";
 
 export default async function Home() {
-  // Fetch premium salons data server-side
-  const premiumSalons = await fetchPremiumSalons();
+  // Fetch premium salons and map salons data server-side
+  const [premiumSalons, mapSalons] = await Promise.all([
+    fetchPremiumSalons(),
+    fetchMapSalons()
+  ]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -20,6 +23,7 @@ export default async function Home() {
           <CityGrid />
           <ListView 
             salons={premiumSalons}
+            mapSalons={mapSalons}
             title="Premium Salony dla Ciebie"
             subtitle={`Odkryj ${premiumSalons.length} najlepszych salonów premium w Polsce`}
           />
