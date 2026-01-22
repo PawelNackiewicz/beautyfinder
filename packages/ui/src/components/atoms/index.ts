@@ -9,3 +9,4 @@ export { Skeleton } from "./skeleton/Skeleton";
 export { Spinner } from "./spinner/Spinner";
 export { Badge, badgeVariants } from "./badge/Badge";
 export { Typography, typographyVariants } from "./typography/Typography";
+export { Progress } from './progress/Progress'

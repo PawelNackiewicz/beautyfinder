@@ -100,3 +100,13 @@ export const SALONS: Salon[] = [
     coordinates: { lat: 54.3520, lng: 18.6466 }
   }
 ];
+
+export const MOCK_USER = {
+  name: 'Aleksandra Nowak',
+  role: 'Gold Loyalty Member',
+  points: 1250,
+  maxPoints: 2000,
+  phone: '+48 600 500 400',
+  email: 'a.nowak@luxmail.com',
+  avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=200&h=200'
+};

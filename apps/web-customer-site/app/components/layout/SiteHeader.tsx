@@ -55,10 +55,9 @@ export const SiteHeader = () => {
               Kup Bon
              </Link>
           </Button>
-          <Button variant="outline" asChild>
-            <Link href="/logowanie">
-              <LogIn className="w-4 h-4 mr-2" />
-              Zaloguj
+          <Button variant="ghost" size="icon" className="rounded-full" asChild>
+            <Link href="/profile">
+              <User className="w-5 h-5" />
             </Link>
           </Button>
         </div>
