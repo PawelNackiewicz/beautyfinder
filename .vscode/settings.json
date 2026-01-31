@@ -5,9 +5,20 @@
     }
   ],
   "workbench.colorCustomizations": {
-    "activityBar.background": "#2E3005",
-    "titleBar.activeBackground": "#414308",
-    "titleBar.activeForeground": "#FBFCE2"
+    "activityBar.background": "#a4f9b7",
+    "titleBar.activeBackground": "#a4f9b7",
+    "titleBar.activeForeground": "#000000",
+    "titleBar.inactiveBackground": "#a4f9b7",
+    "titleBar.inactiveForeground": "#000000",
+    "titleBar.border": "#a4f9b7",
+    "activityBar.foreground": "#000000",
+    "statusBar.background": "#a4f9b7",
+    "statusBar.foreground": "#000000",
+    "statusBar.debuggingBackground": "#a4f9b7",
+    "statusBar.debuggingForeground": "#000000",
+    "tab.activeBorder": "#a4f9b7",
+    "iLoveWorkSpaceColors": true,
+    "iLoveWorkSpaceRandom": false
   },
   "typescript.tsdk": "node_modules/typescript/lib"
 }
