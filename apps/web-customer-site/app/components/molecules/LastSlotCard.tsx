@@ -11,7 +11,7 @@ import {
 import { Clock, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import type { LastMinuteSlot } from "../lib/last-minute-slots.mock";
+import type { LastMinuteSlot } from "../../lib/last-minute-slots.mock";
 
 interface LastSlotCardProps {
   slot: LastMinuteSlot;
@@ -63,7 +63,7 @@ export const LastSlotCard = ({ slot }: LastSlotCardProps) => {
         </div>
       </CardContent>
 
-      <CardFooter>
+      <CardFooter className="pb-4">
         <Link href={`/salon/${slot.salonId}`} className="w-full">
           <Button className="w-full" size="lg">
             Zarezerwuj teraz

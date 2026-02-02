@@ -1,86 +1,53 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Star } from "lucide-react";
-import { Button, Card, CardContent, CardFooter } from "@repo/ui/components";
+import {
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardTitle,
+  CardDescription,
+} from "@repo/ui/components";
+import type { Salon } from "../../lib/mockData";
 
 interface SalonCardProps {
-  id: string;
-  name: string;
-  imageUrl: string;
-  rating: number;
-  reviewCount: number;
-  lastVisit?: string;
-  slug: string;
+  salon: Salon & { lastVisit?: string };
 }
 
-export function SalonCard({
-  id,
-  name,
-  imageUrl,
-  rating,
-  reviewCount,
-  lastVisit,
-  slug,
-}: SalonCardProps) {
+export function SalonCard({ salon }: SalonCardProps) {
   return (
-    <Card className="overflow-hidden transition-shadow hover:shadow-lg">
-      {/* Image Section */}
-      <div className="relative h-48 w-full overflow-hidden">
+    <Card className="rounded-3xl overflow-hidden hover:shadow-2xl transition-all group border-gray-100 p-0 gap-0">
+      <div className="relative h-64 overflow-hidden">
         <Image
-          src={imageUrl}
-          alt={`${name} - wnętrze salonu`}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          src={salon.imageUrl}
+          alt={salon.name}
+          width={"800"}
+          height={"600"}
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-      </div>
-
-      {/* Content Section */}
-      <CardContent className="flex flex-col gap-3">
-        {/* Salon Name */}
-        <Link href={`/salons/${slug}`}>
-          <h3 className="text-xl font-semibold text-gray-900 hover:text-primary transition-colors">
-            {name}
-          </h3>
-        </Link>
-
-        {/* Rating */}
-        <div className="flex items-center gap-2">
-          <div className="flex items-center">
-            {[...Array(5)].map((_, index) => (
-              <Star
-                key={index}
-                className={`h-4 w-4 ${
-                  index < Math.floor(rating)
-                    ? "fill-yellow-400 text-yellow-400"
-                    : "fill-gray-200 text-gray-200"
-                }`}
-              />
-            ))}
-          </div>
-          <span className="text-sm font-medium text-gray-700">
-            {rating.toFixed(1)} ({reviewCount}{" "}
-            {reviewCount === 1
-              ? "recenzja"
-              : reviewCount < 5
-                ? "recenzje"
-                : "recenzji"}
-            )
-          </span>
+        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1 shadow-md">
+          <i className="fa-solid fa-star text-yellow-500"></i>
+          <span className="font-bold text-gray-900">{salon.rating}</span>
         </div>
-
-        {/* Last Visit */}
-        {lastVisit && (
-          <p className="text-sm text-gray-600">Ostatnia wizyta: {lastVisit}</p>
-        )}
+        <div className="absolute bottom-4 left-4">
+          <Badge>{salon.category}</Badge>
+        </div>
+      </div>
+      <CardContent className="p-6">
+        <CardTitle className="text-xl font-bold text-gray-900 mb-2">
+          {salon.name}
+        </CardTitle>
+        <CardDescription className="flex items-center gap-2 text-gray-500 mb-6">
+          <i className="fa-solid fa-location-dot text-[#2D5A27]"></i>
+          <span className="text-sm">{salon.location}</span>
+        </CardDescription>
+        <div className="flex items-center justify-between border-t border-gray-50 pt-6">
+          <Button asChild variant="link">
+            <Link href={`/${salon.slug}`}>Szczegóły</Link>
+          </Button>
+          <Button>Zarezerwuj</Button>
+        </div>
       </CardContent>
-
-      {/* CTA Button */}
-      <CardFooter>
-        <Button asChild>
-          <Link href={`/salons/${slug}/book`}>Umów Ponownie</Link>
-        </Button>
-      </CardFooter>
     </Card>
   );
 }

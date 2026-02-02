@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Gift, User } from "lucide-react";
 import { HeroSection } from "./components/HeroSection";
 import { CategoryTabs } from "./components/CategoryTabs";
-import CityGrid from "./components/CityGrid";
 import ListView from "./components/ListView";
 import { fetchMapSalons, fetchPremiumSalons } from "./lib/api-client";
 
@@ -14,6 +13,7 @@ import { VerifiedExpertsSection } from "./components/VerifiedExpertsSection";
 import { mockExperts } from "./lib/experts.mock";
 import { LastMinuteSlotsSection } from "./components/LastMinuteSlotsSection";
 import { mockLastMinuteSlots } from "./lib/last-minute-slots.mock";
+import { CityGridSection } from "./components/CityGridSection";
 
 export default async function Home() {
   // Fetch premium salons and map salons data server-side
@@ -38,7 +38,7 @@ export default async function Home() {
         />
         <VerifiedExpertsSection experts={mockExperts} />
         <LastMinuteSlotsSection slots={mockLastMinuteSlots} />
-        <CityGrid />
+        <CityGridSection />
         <ListView
           salons={premiumSalons}
           mapSalons={mapSalons}

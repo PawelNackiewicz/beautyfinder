@@ -1,19 +1,10 @@
 import React from "react";
-import { SALONS, Salon, SERVICES } from "../lib/mockData";
+import { SALONS, Salon } from "../lib/mockData";
 import Link from "next/link";
-import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardTitle,
-  CardDescription,
-  Tabs,
-  TabsList,
-  TabsTrigger,
-  TabsContent,
-} from "@repo/ui/components";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@repo/ui/components";
 import { SalonMap } from "./SalonMap";
+import { SalonCard } from "./molecules/SalonCard";
+import Image from "next/image";
 
 interface ListViewProps {
   salons?: Salon[];
@@ -71,7 +62,7 @@ const ListingView = ({
                       key={salon.id}
                       className="flex gap-4 p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors border border-transparent hover:border-gray-200"
                     >
-                      <img
+                      <Image
                         src={salon.imageUrl}
                         className="w-24 h-24 object-cover rounded-lg"
                         alt={salon.name}
@@ -117,45 +108,6 @@ const ListingView = ({
         </Tabs>
       </div>
     </section>
-  );
-};
-
-const SalonCard = ({ salon }: { salon: Salon }) => {
-  const categoryName =
-    SERVICES.find((s) => s.id === salon.category)?.name || salon.category;
-
-  return (
-    <Card className="rounded-3xl overflow-hidden hover:shadow-2xl transition-all group border-gray-100 p-0 gap-0">
-      <div className="relative h-64 overflow-hidden">
-        <img
-          src={salon.imageUrl}
-          alt={salon.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-        />
-        <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-full flex items-center gap-1 shadow-md">
-          <i className="fa-solid fa-star text-yellow-500"></i>
-          <span className="font-bold text-gray-900">{salon.rating}</span>
-        </div>
-        <div className="absolute bottom-4 left-4">
-          <Badge>{categoryName}</Badge>
-        </div>
-      </div>
-      <CardContent className="p-6">
-        <CardTitle className="text-xl font-bold text-gray-900 mb-2">
-          {salon.name}
-        </CardTitle>
-        <CardDescription className="flex items-center gap-2 text-gray-500 mb-6">
-          <i className="fa-solid fa-location-dot text-[#2D5A27]"></i>
-          <span className="text-sm">{salon.location}</span>
-        </CardDescription>
-        <div className="flex items-center justify-between border-t border-gray-50 pt-6">
-          <Button asChild variant="link">
-            <Link href={`/${salon.slug}`}>Szczegóły</Link>
-          </Button>
-          <Button>Zarezerwuj</Button>
-        </div>
-      </CardContent>
-    </Card>
   );
 };
 
