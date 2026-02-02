@@ -17,6 +17,7 @@ export const LastMinuteSlotsSection = ({
     <FeatureSection
       title="Ostatnie wolne terminy na dziś"
       description="Zarezerwuj teraz i ciesz się ekskluzywną zniżką"
+      className="bg-primary/20"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
         {slots.map((slot) => (
