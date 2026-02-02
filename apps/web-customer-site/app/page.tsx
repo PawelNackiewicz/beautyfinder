@@ -1,6 +1,6 @@
 import { Button } from "@repo/ui/components";
 import Link from "next/link";
-import { Facebook, Gift, Instagram, Linkedin, User } from "lucide-react";
+import { Gift, User } from "lucide-react";
 import { HeroSection } from "./components/HeroSection";
 import { CategoryTabs } from "./components/CategoryTabs";
 import CityGrid from "./components/CityGrid";
@@ -8,29 +8,45 @@ import ListView from "./components/ListView";
 import { fetchMapSalons, fetchPremiumSalons } from "./lib/api-client";
 
 import { Footer } from "./components/layout/Footer";
+import { RecentVisitsSection } from "./components/RecentVisitsSection";
+import { mockCustomerName, mockRecentVisits } from "./lib/recent-visits.mock";
+import { VerifiedExpertsSection } from "./components/VerifiedExpertsSection";
+import { mockExperts } from "./lib/experts.mock";
+import { LastMinuteSlotsSection } from "./components/LastMinuteSlotsSection";
+import { mockLastMinuteSlots } from "./lib/last-minute-slots.mock";
 
 export default async function Home() {
   // Fetch premium salons and map salons data server-side
   const [premiumSalons, mapSalons] = await Promise.all([
     fetchPremiumSalons(),
-    fetchMapSalons()
+    fetchMapSalons(),
   ]);
+
+  // TODO: Replace with actual API call when authentication is ready
+  // const recentVisits = await fetchRecentVisits();
+  // const customerName = await getCustomerName();
 
   return (
     <div className="min-h-screen bg-background">
-        <Header />
-        <main>
-          <HeroSection />
-          <CategoryTabs />
-          <CityGrid />
-          <ListView 
-            salons={premiumSalons}
-            mapSalons={mapSalons}
-            title="Premium Salony dla Ciebie"
-            subtitle={`Odkryj ${premiumSalons.length} najlepszych salonów premium w Polsce`}
-          />
-        </main>
-        <Footer />
+      <Header />
+      <main>
+        <HeroSection />
+        <CategoryTabs />
+        <RecentVisitsSection
+          customerName={mockCustomerName}
+          recentVisits={mockRecentVisits}
+        />
+        <VerifiedExpertsSection experts={mockExperts} />
+        <LastMinuteSlotsSection slots={mockLastMinuteSlots} />
+        <CityGrid />
+        <ListView
+          salons={premiumSalons}
+          mapSalons={mapSalons}
+          title="Premium Salony dla Ciebie"
+          subtitle={`Odkryj ${premiumSalons.length} najlepszych salonów premium w Polsce`}
+        />
+      </main>
+      <Footer />
     </div>
   );
 }
@@ -57,7 +73,12 @@ const Header = () => (
               Kup Bon
             </Button>
           </Link>
-          <Button variant="outline" size="icon" className="rounded-full" asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-full"
+            asChild
+          >
             <Link href="/profile">
               <User className="w-5 h-5" />
             </Link>
@@ -66,4 +87,4 @@ const Header = () => (
       </div>
     </div>
   </header>
-)
+);
