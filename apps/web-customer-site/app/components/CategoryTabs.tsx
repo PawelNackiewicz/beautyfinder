@@ -28,7 +28,7 @@ export const CategoryTabs = () => {
             return (
               <Link
                 key={category.id}
-                href={`/${category.id}`}
+                href={`/usluga/${category.id}`}
                 className="group flex flex-col items-center gap-4 p-6 lg:p-8 rounded-2xl border border-border hover:border-primary hover:bg-primary/5 transition-all duration-300 hover:shadow-card animate-fade-up"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
