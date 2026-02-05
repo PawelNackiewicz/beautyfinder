@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { CITIES } from "../lib/mockData";
 import Image from "next/image";
-import { FeatureSection } from "./layout";
+import { FeatureSection } from "components";
+import { CITIES } from "app/lib/mockData";
 
 export const CityGridSection = () => {
   return (

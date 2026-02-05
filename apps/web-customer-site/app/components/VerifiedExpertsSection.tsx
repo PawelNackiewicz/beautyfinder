@@ -1,7 +1,5 @@
-import { ExpertCard } from "./molecules/ExpertCard";
-import { Typography } from "@repo/ui/components";
-import type { Expert } from "../lib/experts.mock";
-import { FeatureSection } from "./layout";
+import { Expert } from "app/lib/experts.mock";
+import { ExpertCard, FeatureSection } from "components";
 
 interface VerifiedExpertsSectionProps {
   experts: Expert[];

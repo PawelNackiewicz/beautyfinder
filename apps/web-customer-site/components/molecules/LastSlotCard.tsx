@@ -7,11 +7,12 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
+  Badge,
 } from "@repo/ui/components";
 import { Clock, MapPin } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import type { LastMinuteSlot } from "../../lib/last-minute-slots.mock";
+import type { LastMinuteSlot } from "../../app/lib/last-minute-slots.mock";
 
 interface LastSlotCardProps {
   slot: LastMinuteSlot;
@@ -19,19 +20,16 @@ interface LastSlotCardProps {
 
 export const LastSlotCard = ({ slot }: LastSlotCardProps) => {
   return (
-    <Card className="group overflow-hidden p-0 hover:shadow-xl transition-shadow duration-300">
-      {/* Image with discount badge */}
+    <Card className="group overflow-hidden p-0">
       <div className="relative h-64 overflow-hidden">
         <Image
           src={slot.imageUrl}
           alt={slot.serviceName}
-          fill
-          className="object-cover group-hover:scale-105 transition-transform duration-300"
+          width={800}
+          height={600}
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
-        {/* Discount Badge */}
-        <div className="absolute top-4 right-4 bg-yellow-500 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-lg">
-          {slot.discount}% OFF
-        </div>
+        <Badge className="absolute top-4 right-4">{slot.discount}% OFF</Badge>
       </div>
 
       <CardHeader>
@@ -39,20 +37,17 @@ export const LastSlotCard = ({ slot }: LastSlotCardProps) => {
         <CardDescription>{slot.salonName}</CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-3">
-        {/* Time */}
+      <CardContent>
         <div className="flex items-center gap-2 text-muted-foreground">
           <Clock className="w-4 h-4" />
           <Typography variant="small">{slot.displayTime}</Typography>
         </div>
 
-        {/* Address */}
         <div className="flex items-start gap-2 text-muted-foreground">
           <MapPin className="w-4 h-4 mt-0.5 shrink-0" />
           <Typography variant="small">{slot.address}</Typography>
         </div>
 
-        {/* Price */}
         <div className="flex items-baseline gap-2 pt-2">
           <Typography variant="h3">€{slot.price}</Typography>
           {slot.discount > 0 && (
@@ -63,7 +58,7 @@ export const LastSlotCard = ({ slot }: LastSlotCardProps) => {
         </div>
       </CardContent>
 
-      <CardFooter className="pb-4">
+      <CardFooter className="w-full p-6">
         <Link href={`/salon/${slot.salonId}`} className="w-full">
           <Button className="w-full" size="lg">
             Zarezerwuj teraz

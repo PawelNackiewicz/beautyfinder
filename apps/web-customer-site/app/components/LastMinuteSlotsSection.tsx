@@ -1,6 +1,5 @@
-import type { LastMinuteSlot } from "../lib/last-minute-slots.mock";
-import { LastSlotCard } from "./molecules/LastSlotCard";
-import { FeatureSection } from "./layout";
+import { LastMinuteSlot } from "app/lib/last-minute-slots.mock";
+import { FeatureSection, LastSlotCard } from "components";
 
 interface LastMinuteSlotsSectionProps {
   slots: LastMinuteSlot[];

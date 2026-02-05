@@ -1,3 +1,7 @@
+---
+applyTo: apps/web-customer-site/**
+---
+
 # Next.js Standard (App Router)
 
 - **Components:** Default to Server Components. Use `'use client'` sparingly.

@@ -1,3 +1,7 @@
+---
+applyTo: apps/web-manager-site/**
+---
+
 # React Standard (Vite/SPA)
 
 - **Patterns:** Functional Components with Hooks.

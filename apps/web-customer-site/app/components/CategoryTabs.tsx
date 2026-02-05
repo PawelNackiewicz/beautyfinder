@@ -12,9 +12,6 @@ const categories = [
 ];
 
 export const CategoryTabs = () => {
-
-
-
   return (
     <section className="py-16 lg:py-24 bg-background">
       <div className="container mx-auto px-4 lg:px-8">

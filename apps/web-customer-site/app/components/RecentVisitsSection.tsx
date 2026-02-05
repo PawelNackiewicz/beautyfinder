@@ -1,6 +1,5 @@
-import { FeatureSection } from "./layout";
-import { SalonCard } from "./molecules";
-import type { RecentVisit } from "../lib/recent-visits.mock";
+import { RecentVisit } from "app/lib/recent-visits.mock";
+import { FeatureSection, SalonCard } from "components";
 
 interface RecentVisitsSectionProps {
   customerName: string;
