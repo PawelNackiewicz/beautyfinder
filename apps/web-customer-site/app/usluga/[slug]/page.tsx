@@ -7,6 +7,7 @@ import {
   THEMATIC_COLLECTIONS,
 } from "../mockData";
 import {
+  ServiceHero,
   ServiceCategoryTabs,
   ServiceSalonCard,
   MapPlaceholder,
@@ -18,6 +19,14 @@ import {
 export default function UslugaPage() {
   return (
     <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <ServiceHero
+        title="Makijaż Permanentny w Twojej okolicy"
+        subtitle="Odkryj luksusowe usługi kosmetyczne i zarezerwuj wizytę u najlepszych artystów w Polsce."
+        ctaText="Eksploruj usługi"
+        portfolioText="Portfolio artystów"
+      />
+
       {/* Category filter tabs */}
       <div className="border-b border-gray-200 bg-white sticky top-0 z-10">
         <div className="container mx-auto px-4 py-3">

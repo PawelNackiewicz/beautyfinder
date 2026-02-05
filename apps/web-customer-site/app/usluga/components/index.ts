@@ -1,3 +1,4 @@
+export { ServiceHero } from "./ServiceHero";
 export { ServiceSalonCard } from "./ServiceSalonCard";
 export { ServiceCategoryTabs } from "./ServiceCategoryTabs";
 export { MapPlaceholder } from "./MapPlaceholder";
