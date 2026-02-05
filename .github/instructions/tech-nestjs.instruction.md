@@ -1,3 +1,6 @@
+---
+applyTo: apps/api-customer/**
+---
 # NestJS Backend Standard
 
 - **Architecture:** Controller -> Service -> Repository (Prisma).

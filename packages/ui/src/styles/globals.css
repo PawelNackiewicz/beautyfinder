@@ -44,8 +44,12 @@
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
   --color-warning-foreground: var(--warning-foreground);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
+  --color-neutral: var(--neutral);
+  --color-neutral-foreground: var(--neutral-foreground);
 }
 
 :root {
@@ -79,8 +83,12 @@
   --success-foreground: oklch(1 0 0);
   --warning: oklch(0.75 0.18 75);
   --warning-foreground: oklch(0.35 0.1 75);
+  --error: oklch(0.58 0.22 25);
+  --error-foreground: oklch(1 0 0);
   --info: oklch(0.65 0.17 230);
   --info-foreground: oklch(1 0 0);
+  --neutral: oklch(0.92 0.01 160);
+  --neutral-foreground: oklch(0.32 0.02 160);
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, oklch(0.55 0.15 160) 0%, oklch(0.6 0.13 165) 100%);
   --gradient-hero: linear-gradient(180deg, oklch(0.975 0.01 160) 0%, oklch(0.96 0.015 160) 100%);
@@ -135,8 +143,12 @@
   --success-foreground: oklch(1 0 0);
   --warning: oklch(0.75 0.18 75);
   --warning-foreground: oklch(0.35 0.1 75);
+  --error: oklch(0.62 0.2 25);
+  --error-foreground: oklch(1 0 0);
   --info: oklch(0.65 0.17 230);
   --info-foreground: oklch(1 0 0);
+  --neutral: oklch(0.3 0.02 160);
+  --neutral-foreground: oklch(0.9 0.01 160);
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, oklch(0.6 0.15 160) 0%, oklch(0.65 0.13 165) 100%);
   --gradient-hero: linear-gradient(180deg, oklch(0.18 0.02 160) 0%, oklch(0.2 0.025 160) 100%);
@@ -213,5 +225,127 @@
 
   .shadow-glow {
     box-shadow: var(--shadow-glow);
+  }
+}
+
+@layer utilities {
+  .text-success {
+    color: var(--color-success);
+  }
+
+  .text-success-foreground {
+    color: var(--color-success-foreground);
+  }
+
+  .bg-success {
+    background-color: var(--color-success);
+  }
+
+  .border-success {
+    border-color: var(--color-success);
+  }
+
+  .fill-success {
+    fill: var(--color-success);
+  }
+
+  .stroke-success {
+    stroke: var(--color-success);
+  }
+
+  .text-warning {
+    color: var(--color-warning);
+  }
+
+  .text-warning-foreground {
+    color: var(--color-warning-foreground);
+  }
+
+  .bg-warning {
+    background-color: var(--color-warning);
+  }
+
+  .border-warning {
+    border-color: var(--color-warning);
+  }
+
+  .fill-warning {
+    fill: var(--color-warning);
+  }
+
+  .stroke-warning {
+    stroke: var(--color-warning);
+  }
+
+  .text-error {
+    color: var(--color-error);
+  }
+
+  .text-error-foreground {
+    color: var(--color-error-foreground);
+  }
+
+  .bg-error {
+    background-color: var(--color-error);
+  }
+
+  .border-error {
+    border-color: var(--color-error);
+  }
+
+  .fill-error {
+    fill: var(--color-error);
+  }
+
+  .stroke-error {
+    stroke: var(--color-error);
+  }
+
+  .text-info {
+    color: var(--color-info);
+  }
+
+  .text-info-foreground {
+    color: var(--color-info-foreground);
+  }
+
+  .bg-info {
+    background-color: var(--color-info);
+  }
+
+  .border-info {
+    border-color: var(--color-info);
+  }
+
+  .fill-info {
+    fill: var(--color-info);
+  }
+
+  .stroke-info {
+    stroke: var(--color-info);
+  }
+
+  .text-neutral {
+    color: var(--color-neutral);
+  }
+
+  .text-neutral-foreground {
+    color: var(--color-neutral-foreground);
+  }
+
+  .bg-neutral {
+    background-color: var(--color-neutral);
+  }
+
+  .border-neutral {
+    border-color: var(--color-neutral);
+  }
+
+  .fill-neutral {
+    fill: var(--color-neutral);
+  }
+
+  .stroke-neutral {
+    stroke: var(--color-neutral);
   }
 }
