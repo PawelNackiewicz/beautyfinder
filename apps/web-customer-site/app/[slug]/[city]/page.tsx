@@ -1,9 +1,8 @@
 import { notFound } from "next/navigation";
 import { SERVICES, CITIES, SALONS } from "../../lib/mockData";
-import ListView from "../../../components/PremiumSalonsSection";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { StandardPageLayout } from "../../../components/layout/StandardPageLayout";
+import { ListingView, StandardPageLayout } from "components";
 
 interface PageProps {
   params: Promise<{
@@ -46,7 +45,7 @@ export default async function ServiceCityPage(props: PageProps) {
         {city.name}.
       </p>
 
-      <ListView
+      <ListingView
         salons={filteredSalons}
         title={`Salony: ${service.name} - ${city.name}`}
         subtitle={
