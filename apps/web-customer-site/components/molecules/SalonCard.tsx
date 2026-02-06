@@ -63,7 +63,9 @@ export function SalonCard({ salon }: SalonCardProps) {
         <Button asChild variant="outline">
           <Link href={`/salon/${salon.slug}`}>Szczegóły</Link>
         </Button>
-        <Button>Zarezerwuj</Button>
+        <Button asChild>
+          <Link href={`/rezerwacja/${salon.slug}/service`}>Zarezerwuj</Link>
+        </Button>
       </CardFooter>
     </Card>
   );
