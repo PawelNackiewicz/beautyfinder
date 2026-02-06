@@ -61,7 +61,7 @@ export function SalonCard({ salon }: SalonCardProps) {
       </CardContent>
       <CardFooter className="w-full flex justify-between p-6">
         <Button asChild variant="outline">
-          <Link href={`/${salon.slug}`}>Szczegóły</Link>
+          <Link href={`/salon/${salon.slug}`}>Szczegóły</Link>
         </Button>
         <Button>Zarezerwuj</Button>
       </CardFooter>
