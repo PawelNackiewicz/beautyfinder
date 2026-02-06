@@ -1,3 +1,4 @@
+import Link from "next/link";
 import {
   Avatar,
   AvatarFallback,
@@ -23,16 +24,18 @@ export function ExpertCard({ expert }: ExpertCardProps) {
   return (
     <Card className="group overflow-hidden hover:shadow-2xl transition-all p-0">
       <CardContent className="flex flex-col items-center gap-3 p-6">
-        <Avatar className="size-32 lg:size-40 border-4 border-border group-hover:border-primary transition-colors">
-          <AvatarImage
-            src={expert.imageUrl}
-            alt={expert.name}
-            className="object-cover"
-          />
-          <AvatarFallback className="text-2xl font-semibold">
-            {initials}
-          </AvatarFallback>
-        </Avatar>
+        <Link href={`/specjalista/${expert?.slug || "xx"}`}>
+          <Avatar className="size-32 lg:size-40 border-4 border-border group-hover:border-primary transition-colors cursor-pointer">
+            <AvatarImage
+              src={expert.imageUrl}
+              alt={expert.name}
+              className="object-cover"
+            />
+            <AvatarFallback className="text-2xl font-semibold">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
+        </Link>
 
         <div className="space-y-1.5 text-center flex items-center flex-col">
           <h3 className="font-semibold text-lg">{expert.name}</h3>
