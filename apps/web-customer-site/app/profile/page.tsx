@@ -10,8 +10,17 @@ import {
   mockVouchersAndRewards,
 } from "./mocks";
 import { SiteHeader } from "components";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-export default function ProfilePage() {
+export default async function ProfilePage() {
+  const { userId } = await auth();
+
+  // Dodatkowa ochrona - redirect jeśli nie zalogowany
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <SiteHeader />
