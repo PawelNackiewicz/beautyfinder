@@ -10,10 +10,11 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button, Separator } from "@repo/ui/components";
+import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 
 export const SiteHeader = () => {
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between gap-4">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
@@ -55,18 +56,42 @@ export const SiteHeader = () => {
         </div>
 
         {/* User Panel */}
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex items-center gap-2 shrink-0">
           <Button className="hidden sm:flex gap-2" asChild>
             <Link href="/kup-bon">
               <Gift className="w-4 h-4" />
               Kup Bon
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" className="rounded-full" asChild>
-            <Link href="/profile">
-              <User className="w-5 h-5" />
-            </Link>
-          </Button>
+
+          <SignedOut>
+            <Button variant="ghost" size="icon" className="rounded-full" asChild>
+              <Link href="/sign-in">
+                <LogIn className="w-5 h-5" />
+              </Link>
+            </Button>
+          </SignedOut>
+
+          <SignedIn>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              asChild
+            >
+              <Link href="/profile">
+                <User className="w-5 h-5" />
+              </Link>
+            </Button>
+            <UserButton
+              afterSignOutUrl="/"
+              appearance={{
+                elements: {
+                  avatarBox: "w-9 h-9",
+                },
+              }}
+            />
+          </SignedIn>
         </div>
       </div>
     </header>

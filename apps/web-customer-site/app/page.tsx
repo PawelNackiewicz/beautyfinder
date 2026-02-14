@@ -13,9 +13,13 @@ import {
   VerifiedExpertsSection,
 } from "./components";
 import { Footer, SiteHeader } from "components";
+import { SignedIn } from "@clerk/nextjs";
+import { auth, currentUser } from "@clerk/nextjs/server";
 
 export default async function Home() {
   const [premiumSalons] = await Promise.all([fetchPremiumSalons()]);
+  const { userId } = await auth();
+  const user = userId ? await currentUser() : null;
 
   return (
     <div className="min-h-screen bg-background">
@@ -23,10 +27,15 @@ export default async function Home() {
       <main>
         <HeroSection />
         <CategoryTabs />
-        <RecentVisitsSection
-          customerName={mockCustomerName}
-          recentVisits={mockRecentVisits}
-        />
+
+        {/* Personalizowane sekcje tylko dla zalogowanych */}
+        <SignedIn>
+          <RecentVisitsSection
+            customerName={user?.firstName || mockCustomerName}
+            recentVisits={mockRecentVisits}
+          />
+        </SignedIn>
+
         <VerifiedExpertsSection experts={mockExperts} />
         <LastMinuteSlotsSection slots={mockLastMinuteSlots} />
         <CityGridSection />

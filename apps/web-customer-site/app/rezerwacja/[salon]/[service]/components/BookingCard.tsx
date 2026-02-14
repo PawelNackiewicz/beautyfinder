@@ -8,7 +8,9 @@ import {
   AlertDescription,
 } from "@repo/ui/components";
 import { Lock, AlertTriangle } from "lucide-react";
+import Link from "next/link";
 import type { ServiceDetail } from "../types";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
 
 interface BookingCardProps {
   service: ServiceDetail;
@@ -57,13 +59,30 @@ export function BookingCard({
           </AlertDescription>
         </Alert>
 
-        {/* CTA Button */}
-        <Button
-          disabled={!selectedSlot || isLoading}
-          className="w-full bg-green-600 hover:bg-green-700 text-white text-lg h-12"
-        >
-          {isLoading ? "Przetwarzanie..." : "Zarezerwuj i zapłać na miejscu"}
-        </Button>
+        {/* CTA Button - wymagane logowanie */}
+        <SignedOut>
+          <Button
+            disabled={!selectedSlot}
+            className="w-full bg-green-600 hover:bg-green-700 text-white text-lg h-12"
+            asChild
+          >
+            <Link href="/sign-in">
+              Zaloguj się, aby zarezerwować
+            </Link>
+          </Button>
+          <p className="text-xs text-gray-600 text-center">
+            Zgodnie z polityką serwisu, rezerwacja wymaga konta użytkownika
+          </p>
+        </SignedOut>
+
+        <SignedIn>
+          <Button
+            disabled={!selectedSlot || isLoading}
+            className="w-full bg-green-600 hover:bg-green-700 text-white text-lg h-12"
+          >
+            {isLoading ? "Przetwarzanie..." : "Zarezerwuj i zapłać na miejscu"}
+          </Button>
+        </SignedIn>
 
         {/* Info */}
         <p className="text-xs text-gray-600 text-center flex items-center justify-center gap-1">
