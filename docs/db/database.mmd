@@ -1,0 +1,193 @@
+erDiagram
+    users ||--o{ user_auth_identities : "auth_methods"
+    users ||--o{ user_consents : "consents"
+    users ||--o| staff_profiles : "professional"
+    users ||--o{ salon_user_roles : "employment"
+    users ||--o{ loyalty_balances : "points"
+    users ||--o{ user_system_roles : "global_permissions"
+    users ||--o{ reviews : "writes"
+    
+    system_roles ||--o{ user_system_roles : "defined_as"
+    
+    consent_types ||--o{ consent_versions : "ma_wersje"
+    consent_versions ||--o{ user_consents : "zostala_zaakceptowana"
+
+    salons ||--o{ locations : "has"
+    salons ||--o| salon_settings : "config"
+    salons ||--o{ treatments : "offering"
+    salons ||--o{ commission_invoices : "billing"
+    salons ||--o{ staff_profiles : "employs"
+    salons ||--o{ reviews : "salon_feedback"
+    
+    locations ||--o{ staff_weekly_schedules : "hours"
+    locations ||--o{ appointments : "hosting"
+    
+    staff_profiles ||--o{ staff_treatment_capabilities : "skills"
+    staff_profiles ||--o{ staff_weekly_schedules : "roster"
+    staff_profiles ||--o{ appointments : "performs"
+    staff_profiles ||--o{ reviews : "receives"
+    
+    treatments ||--o{ treatment_variants : "variants"
+    treatments ||--o{ treatment_addons : "addons"
+    
+    treatment_variants ||--o{ treatment_variant_addons : "valid_addons"
+    treatment_variants ||--o{ staff_treatment_capabilities : "staff_links"
+    treatment_addons ||--o{ treatment_variant_addons : "variant_links"
+    
+    appointments ||--o{ appointment_status_history : "status_log"
+    appointments ||--o| reviews : "feedback_for"
+
+    users {
+        uuid id PK
+        citext email "UNIQUE (where deleted_at IS NULL)"
+        text phone "UNIQUE (where deleted_at IS NULL)"
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz deleted_at "Soft delete - NULL means active"
+    }
+
+    user_auth_identities {
+        uuid id PK
+        uuid user_id FK
+        varchar provider "google, apple, local"
+        varchar provider_user_id
+        jsonb metadata
+        timestamptz last_login
+    }
+
+    consent_types {
+        varchar slug PK "np. 'marketing', 'tos'"
+        text name
+        boolean is_mandatory
+    }
+
+    consent_versions {
+        uuid id PK
+        varchar consent_type_slug FK
+        text version_tag
+        text content_summary
+        timestamptz published_at
+    }
+
+    user_consents {
+        uuid id PK
+        uuid user_id FK
+        uuid consent_version_id FK
+        boolean is_granted
+        timestamptz responded_at
+        timestamptz revoked_at
+        varchar ip_address
+    }
+
+    staff_profiles {
+        uuid user_id PK, FK
+        uuid salon_id FK
+        varchar display_name
+        text bio
+        tstzrange visibility_period "Range for profile activity"
+        varchar job_title
+        jsonb social_links
+        timestamptz joined_at
+    }
+
+    reviews {
+        uuid id PK
+        uuid appointment_id FK "UNIQUE - one review per visit"
+        uuid user_id FK "Author"
+        uuid staff_id FK "Target staff"
+        uuid salon_id FK "Target salon"
+        integer rating "1-5"
+        text comment
+        jsonb photos
+        text staff_reply
+        timestamptz created_at
+    }
+
+    salons {
+        uuid id PK
+        citext slug "UNIQUE"
+        char currency "DEFAULT PLN"
+    }
+
+    locations {
+        uuid id PK
+        uuid salon_id FK
+        varchar name "np. Salon Główny, Filia"
+        varchar street_address "np. ul. Marszałkowska 10/2"
+        varchar postal_code "np. 00-001"
+        varchar city "np. Warszawa"
+        varchar country "DEFAULT Poland"
+        geography geom "Point, 4326"
+        jsonb working_hours "Salon opening hours"
+    }
+
+    treatment_variants {
+        uuid id PK
+        uuid treatment_id FK
+        integer price_cents
+        integer duration_minutes
+    }
+
+    appointments {
+        uuid id PK
+        timestamptz start_time PK "Partition Key"
+        uuid user_id FK
+        uuid staff_id FK
+        uuid treatment_variant_id FK
+        appointment_status status
+        tstzrange booking_range "GENERATED"
+    }
+
+    system_roles {
+        varchar slug PK
+        text description
+    }
+
+    user_system_roles {
+        uuid user_id PK, FK
+        varchar role_slug PK, FK
+    }
+
+    staff_treatment_capabilities {
+        uuid staff_id PK, FK
+        uuid treatment_variant_id PK, FK
+        integer custom_duration_minutes
+    }
+
+    staff_weekly_schedules {
+        uuid id PK
+        uuid staff_id FK
+        uuid location_id FK
+        integer day_of_week "0-6"
+        timerange[] available_ranges "ARRAY of ranges"
+        text note
+    }
+
+    treatment_variants {
+        uuid id PK
+        uuid treatment_id FK
+        integer price_cents
+        integer duration_minutes
+    }
+
+    treatment_addons {
+        uuid id PK
+        uuid treatment_id FK
+        varchar name
+        integer price_delta_cents
+        integer duration_delta_minutes
+    }
+
+    treatment_variant_addons {
+        uuid id PK
+        uuid treatment_variant_id FK
+        uuid treatment_addon_id FK
+        boolean is_default
+    }
+
+    commission_invoices {
+        uuid id PK
+        uuid salon_id FK
+        timestamptz issued_at
+        numeric total_amount
+    }
