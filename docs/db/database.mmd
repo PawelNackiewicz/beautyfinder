@@ -117,8 +117,22 @@ erDiagram
         varchar postal_code "np. 00-001"
         varchar city "np. Warszawa"
         varchar country "DEFAULT Poland"
-        geography geom "Point, 4326"
+        decimal latitude "DECIMAL(10, 8)"
+        decimal longitude "DECIMAL(11, 8)"
         jsonb working_hours "Salon opening hours"
+    }
+
+    salon_settings {
+        uuid salon_id PK, FK
+        jsonb settings "Configuration JSONB"
+    }
+
+    treatments {
+        uuid id PK
+        uuid salon_id FK
+        varchar name
+        text description
+        varchar category
     }
 
     treatment_variants {
@@ -133,9 +147,9 @@ erDiagram
         timestamptz start_time PK "Partition Key"
         uuid user_id FK
         uuid staff_id FK
+        uuid location_id FK
         uuid treatment_variant_id FK
         appointment_status status
-        tstzrange booking_range "GENERATED"
     }
 
     system_roles {
@@ -163,11 +177,29 @@ erDiagram
         text note
     }
 
-    treatment_variants {
+    salon_user_roles {
         uuid id PK
-        uuid treatment_id FK
-        integer price_cents
-        integer duration_minutes
+        uuid salon_id FK
+        uuid user_id FK
+        varchar role
+        timestamptz granted_at
+    }
+
+    appointment_status_history {
+        uuid id PK
+        uuid appointment_id FK
+        appointment_status status
+        timestamptz changed_at
+        uuid changed_by FK
+        text note
+    }
+
+    loyalty_balances {
+        uuid id PK
+        uuid user_id FK
+        uuid salon_id FK
+        integer points
+        timestamptz last_updated
     }
 
     treatment_addons {
