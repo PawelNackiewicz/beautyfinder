@@ -21,12 +21,12 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
           <div className="shrink-0">
             <Avatar className="w-24 h-24">
               <AvatarImage
-                src={user.avatarUrl}
-                alt={`${user.firstName} ${user.lastName}`}
+                src={user?.avatarUrl || "/default-avatar.png"}
+                alt={`${user?.firstName} ${user?.lastName}`}
               />
               <AvatarFallback className="text-2xl">
-                {user.firstName[0]}
-                {user.lastName[0]}
+                {user?.firstName?.[0]}
+                {user?.lastName?.[0]}
               </AvatarFallback>
             </Avatar>
           </div>
@@ -37,7 +37,7 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
             <div className="flex justify-between items-start">
               <div>
                 <h3 className="text-2xl font-semibold">
-                  {user.firstName} {user.lastName}
+                  {user?.firstName} {user?.lastName}
                 </h3>
               </div>
               <Button variant="default" size="sm">
@@ -49,11 +49,11 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-sm">
                 <span>📧</span>
-                <span className="text-gray-700">{user.email}</span>
+                <span className="text-gray-700">{user?.email}</span>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <span>📱</span>
-                <span className="text-gray-700">{user.phone}</span>
+                <span className="text-gray-700">{user?.phone}</span>
               </div>
             </div>
 
@@ -67,7 +67,7 @@ export function UserProfileCard({ user }: UserProfileCardProps) {
                 <span className="text-sm font-medium">Alergie i uwagi:</span>
               </div>
               <div className="bg-muted p-3 rounded-md text-sm text-gray-700">
-                {user.allergies}
+                {user?.allergies}
               </div>
             </div>
           </div>

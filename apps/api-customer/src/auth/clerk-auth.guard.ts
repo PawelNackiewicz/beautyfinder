@@ -9,6 +9,7 @@ import { verifyToken } from '@clerk/backend';
 import { Request } from 'express';
 import { UserSyncService } from './user-sync.service';
 import { CurrentUserPayload } from './current-user.decorator';
+import { ClerkJWTPayload } from './clerk.types';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
@@ -24,7 +25,7 @@ export class ClerkAuthGuard implements CanActivate {
   constructor(
     private configService: ConfigService,
     private userSyncService: UserSyncService,
-  ) {}
+  ) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -46,19 +47,12 @@ export class ClerkAuthGuard implements CanActivate {
         throw new UnauthorizedException('CLERK_SECRET_KEY not configured');
       }
 
-      const decoded = await verifyToken(token, {
+      const decoded = (await verifyToken(token, {
         secretKey,
-      });
+      })) as unknown as ClerkJWTPayload;
 
-      // Extract user info from token
-      const clerkUserId = decoded.sub; // 'sub' is the user ID in Clerk JWT
-      const clerkEmail = decoded.email as string | undefined;
-
-      // Find or create user in database
-      const user = await this.userSyncService.findOrCreateUser(
-        clerkUserId,
-        clerkEmail,
-      );
+      // Find or create user in database (with profile sync)
+      const user = await this.userSyncService.findOrCreateUser(decoded);
 
       // Attach user to request
       request.user = {

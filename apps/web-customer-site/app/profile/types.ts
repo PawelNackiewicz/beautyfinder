@@ -1,10 +1,17 @@
 export interface User {
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    allergies: string;
-    avatarUrl: string;
+    id: string;
+    firstName: string | null;
+    lastName: string | null;
+    fullName: string | null;
+    email: string | null;
+    phone: string | null;
+    avatarUrl: string | null;
+    gender: string | null;
+    dateOfBirth: string | null;
+    authProvider: string | null;
+    createdAt: string;
+    lastSyncedAt: string | null;
+    allergies?: string;
 }
 
 export interface Appointment {

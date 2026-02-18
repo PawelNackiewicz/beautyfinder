@@ -12,7 +12,15 @@ export class UserService {
         id: true,
         email: true,
         phone: true,
+        firstName: true,
+        lastName: true,
+        fullName: true,
+        avatarUrl: true,
+        gender: true,
+        dateOfBirth: true,
+        authProvider: true,
         createdAt: true,
+        lastSyncedAt: true,
       },
     });
   }

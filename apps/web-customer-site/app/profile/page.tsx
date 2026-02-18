@@ -44,11 +44,13 @@ export default async function ProfilePage() {
 
   // Convert loyalty balances to vouchers format
   const vouchersAndRewards = {
-    totalPoints: loyalty?.reduce((sum: number, lb: any) => sum + lb.points, 0) || 0,
-    salons: loyalty?.map((lb: any) => ({
-      salonName: lb.salon.slug,
-      points: lb.points,
-    })) || [],
+    totalPoints:
+      loyalty?.reduce((sum: number, lb: any) => sum + lb.points, 0) || 0,
+    salons:
+      loyalty?.map((lb: any) => ({
+        salonName: lb.salon.slug,
+        points: lb.points,
+      })) || [],
   };
 
   return (
@@ -77,7 +79,7 @@ export default async function ProfilePage() {
 
           {user && <UserProfileCard user={user} />}
 
-          <VouchersAndRewardsCard data={vouchersAndRewards} />
+          {/* <VouchersAndRewardsCard data={vouchersAndRewards} /> */}
         </div>
       </main>
     </div>
