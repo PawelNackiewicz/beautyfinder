@@ -30,6 +30,7 @@ export const SiteHeader = () => {
             <input
               className="bg-transparent border-none outline-none text-sm w-full h-10 placeholder:text-muted-foreground/80"
               placeholder="Usługa (np. masaż)"
+              suppressHydrationWarning
             />
           </div>
           <Separator orientation="vertical" className="h-6" />
@@ -39,6 +40,7 @@ export const SiteHeader = () => {
               className="bg-transparent border-none outline-none text-sm w-full h-10 placeholder:text-muted-foreground/80"
               placeholder="Miasto"
               defaultValue="Warszawa"
+              suppressHydrationWarning
             />
           </div>
           <Separator orientation="vertical" className="h-6" />
@@ -46,8 +48,8 @@ export const SiteHeader = () => {
             <CalendarIcon className="w-4 h-4 text-muted-foreground mr-2 group-focus-within/input:text-primary transition-colors" />
             <input
               type="date"
-              className="bg-transparent border-none outline-none text-sm w-full h-10 placeholder:text-muted-foreground/80 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
-              placeholder="Jutro"
+              className="bg-transparent border-none outline-none text-sm w-full h-10 text-muted-foreground/80 [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:w-full"
+              suppressHydrationWarning
             />
           </div>
           <Button size="icon" className="rounded-full h-10 w-10 shrink-0">

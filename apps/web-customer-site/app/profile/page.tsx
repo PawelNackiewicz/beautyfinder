@@ -3,15 +3,14 @@ import { UpcomingAppointmentCard } from "./components/UpcomingAppointmentCard";
 import { PastVisitsList } from "./components/PastVisitsList";
 import { UserProfileCard } from "./components/UserProfileCard";
 import { VouchersAndRewardsCard } from "./components/VouchersAndRewardsCard";
-import {
-  mockUser,
-  mockAppointment,
-  mockPastVisits,
-  mockVouchersAndRewards,
-} from "./mocks";
 import { SiteHeader } from "components";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import {
+  fetchUserProfile,
+  fetchUserAppointments,
+  fetchUserLoyalty,
+} from "../lib/api-client";
 
 export default async function ProfilePage() {
   const { userId } = await auth();
@@ -20,6 +19,37 @@ export default async function ProfilePage() {
   if (!userId) {
     redirect("/sign-in");
   }
+
+  // Fetch real data from API
+  let user = null;
+  let appointments = [];
+  let loyalty = [];
+
+  try {
+    [user, appointments, loyalty] = await Promise.all([
+      fetchUserProfile(),
+      fetchUserAppointments(),
+      fetchUserLoyalty(),
+    ]);
+  } catch (error) {
+    console.error("Failed to fetch user data:", error);
+    // Fallback to empty state or mock data
+  }
+
+  // Get upcoming appointment (first one sorted by date)
+  const upcomingAppointment = appointments?.[0];
+
+  // Get past visits (rest of appointments)
+  const pastVisits = appointments?.slice(1) || [];
+
+  // Convert loyalty balances to vouchers format
+  const vouchersAndRewards = {
+    totalPoints: loyalty?.reduce((sum: number, lb: any) => sum + lb.points, 0) || 0,
+    salons: loyalty?.map((lb: any) => ({
+      salonName: lb.salon.slug,
+      points: lb.points,
+    })) || [],
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -31,9 +61,13 @@ export default async function ProfilePage() {
             Najbliższa wizyta
           </Typography>
 
-          <UpcomingAppointmentCard appointment={mockAppointment} />
+          {upcomingAppointment ? (
+            <UpcomingAppointmentCard appointment={upcomingAppointment} />
+          ) : (
+            <div className="text-gray-500">Brak nadchodzących wizyt</div>
+          )}
 
-          <PastVisitsList visits={mockPastVisits} />
+          {pastVisits.length > 0 && <PastVisitsList visits={pastVisits} />}
         </div>
 
         <div className="col-span-3">
@@ -41,9 +75,9 @@ export default async function ProfilePage() {
             Twój profil
           </Typography>
 
-          <UserProfileCard user={mockUser} />
+          {user && <UserProfileCard user={user} />}
 
-          <VouchersAndRewardsCard data={mockVouchersAndRewards} />
+          <VouchersAndRewardsCard data={vouchersAndRewards} />
         </div>
       </main>
     </div>

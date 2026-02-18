@@ -1,0 +1,314 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email String?  @unique @db.Citext
+  phone String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(6)
+
+  authIdentities           UserAuthIdentity[]
+  reviews                  Review[]
+  loyaltyBalances          LoyaltyBalance[]
+  staffProfile             StaffProfile?
+  salonUserRolesAsUser     SalonUserRole[] @relation("salonUserRolesAsUser")
+  userConsents             UserConsent[]
+
+  @@index([email])
+  @@index([phone])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+model UserAuthIdentity {
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
+  provider        String   @db.VarChar(50)
+  providerUserId  String   @map("provider_user_id") @db.VarChar(255)
+  metadata        Json?
+  lastLogin       DateTime? @map("last_login") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerUserId])
+  @@index([userId])
+  @@map("user_auth_identities")
+}
+
+model Salon {
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  slug     String @unique @db.Citext
+  currency String @default("PLN") @db.Char(3)
+
+  locations             Location[]
+  treatments            Treatment[]
+  salonSettings         SalonSettings?
+  staffProfiles         StaffProfile[]
+  loyaltyBalances       LoyaltyBalance[]
+  reviews               Review[]
+  salonUserRoles        SalonUserRole[]
+  commissionInvoices    CommissionInvoice[]
+
+  @@index([slug])
+  @@map("salons")
+}
+
+model SalonSettings {
+  salonId  String @id @map("salon_id") @db.Uuid
+  settings Json   @default("{}")
+
+  salon Salon @relation(fields: [salonId], references: [id], onDelete: Cascade)
+
+  @@map("salon_settings")
+}
+
+model Location {
+  id              String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  salonId         String  @map("salon_id") @db.Uuid
+  name            String  @db.VarChar(255)
+  streetAddress   String  @map("street_address") @db.VarChar(255)
+  postalCode      String  @map("postal_code") @db.VarChar(20)
+  city            String  @db.VarChar(100)
+  country         String  @default("Poland") @db.VarChar(100)
+  latitude        Decimal? @db.Decimal(10, 8)
+  longitude       Decimal? @db.Decimal(11, 8)
+  workingHours    Json?   @map("working_hours")
+
+  salon                    Salon @relation(fields: [salonId], references: [id], onDelete: Cascade)
+  staffWeeklySchedules     StaffWeeklySchedule[]
+
+  @@index([salonId])
+  @@index([city])
+  @@index([latitude, longitude])
+  @@map("locations")
+}
+
+model Treatment {
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  salonId     String @map("salon_id") @db.Uuid
+  name        String @db.VarChar(255)
+  description String?
+  category    String? @db.VarChar(100)
+
+  salon               Salon @relation(fields: [salonId], references: [id], onDelete: Cascade)
+  variants            TreatmentVariant[]
+  addons              TreatmentAddon[]
+
+  @@index([salonId])
+  @@index([category])
+  @@map("treatments")
+}
+
+model TreatmentVariant {
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  treatmentId String @map("treatment_id") @db.Uuid
+  priceCents  Int    @map("price_cents")
+  durationMinutes Int @map("duration_minutes")
+
+  treatment           Treatment @relation(fields: [treatmentId], references: [id], onDelete: Cascade)
+  staffCapabilities   StaffTreatmentCapability[]
+  variantAddons       TreatmentVariantAddon[]
+
+  @@index([treatmentId])
+  @@map("treatment_variants")
+}
+
+model TreatmentAddon {
+  id              String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  treatmentId     String @map("treatment_id") @db.Uuid
+  name            String @db.VarChar(255)
+  priceDeltaCents Int    @map("price_delta_cents")
+  durationDeltaMinutes Int @map("duration_delta_minutes")
+
+  treatment      Treatment @relation(fields: [treatmentId], references: [id], onDelete: Cascade)
+  variantAddons  TreatmentVariantAddon[]
+
+  @@index([treatmentId])
+  @@map("treatment_addons")
+}
+
+model TreatmentVariantAddon {
+  id                    String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  treatmentVariantId    String  @map("treatment_variant_id") @db.Uuid
+  treatmentAddonId      String  @map("treatment_addon_id") @db.Uuid
+  isDefault             Boolean @default(false) @map("is_default")
+
+  treatmentVariant TreatmentVariant @relation(fields: [treatmentVariantId], references: [id], onDelete: Cascade)
+  treatmentAddon   TreatmentAddon   @relation(fields: [treatmentAddonId], references: [id], onDelete: Cascade)
+
+  @@index([treatmentVariantId])
+  @@index([treatmentAddonId])
+  @@map("treatment_variant_addons")
+}
+
+model StaffProfile {
+  userId           String @id @map("user_id") @db.Uuid
+  salonId          String @map("salon_id") @db.Uuid
+  displayName      String @map("display_name") @db.VarChar(255)
+  bio              String?
+  visibilityPeriod String? @map("visibility_period")
+  jobTitle         String? @map("job_title") @db.VarChar(100)
+  socialLinks      Json?  @map("social_links")
+  joinedAt         DateTime @default(now()) @map("joined_at") @db.Timestamptz(6)
+
+  user                      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  salon                     Salon @relation(fields: [salonId], references: [id], onDelete: Cascade)
+  treatmentCapabilities     StaffTreatmentCapability[]
+  weeklySchedules           StaffWeeklySchedule[]
+  reviews                   Review[]
+  salonUserRolesAsStaff     SalonUserRole[] @relation("salonUserRolesAsStaff")
+
+  @@index([salonId])
+  @@map("staff_profiles")
+}
+
+model StaffTreatmentCapability {
+  staffId                String @map("staff_id") @db.Uuid
+  treatmentVariantId     String @map("treatment_variant_id") @db.Uuid
+  customDurationMinutes  Int?   @map("custom_duration_minutes")
+
+  staff              StaffProfile @relation(fields: [staffId], references: [userId], onDelete: Cascade)
+  treatmentVariant   TreatmentVariant @relation(fields: [treatmentVariantId], references: [id], onDelete: Cascade)
+
+  @@id([staffId, treatmentVariantId])
+  @@index([treatmentVariantId])
+  @@map("staff_treatment_capabilities")
+}
+
+model StaffWeeklySchedule {
+  id               String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  staffId          String @map("staff_id") @db.Uuid
+  locationId       String @map("location_id") @db.Uuid
+  dayOfWeek        Int    @map("day_of_week")
+  availableRanges  Json?  @map("available_ranges")
+  note             String?
+
+  staff              StaffProfile @relation(fields: [staffId], references: [userId], onDelete: Cascade)
+  location           Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@index([staffId])
+  @@index([locationId])
+  @@index([dayOfWeek])
+  @@map("staff_weekly_schedules")
+}
+
+model Review {
+  id              String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  appointmentId   String @unique @map("appointment_id") @db.Uuid
+  userId          String @map("user_id") @db.Uuid
+  staffId         String @map("staff_id") @db.Uuid
+  salonId         String @map("salon_id") @db.Uuid
+  rating          Int
+  comment         String?
+  photos          Json?
+  staffReply      String? @map("staff_reply")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  staff       StaffProfile @relation(fields: [staffId], references: [userId], onDelete: Cascade)
+  salon       Salon @relation(fields: [salonId], references: [id], onDelete: Cascade)
+
+  @@index([appointmentId])
+  @@index([userId])
+  @@index([staffId])
+  @@index([salonId])
+  @@index([rating])
+  @@index([createdAt])
+  @@map("reviews")
+}
+
+model LoyaltyBalance {
+  id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId        String @map("user_id") @db.Uuid
+  salonId       String @map("salon_id") @db.Uuid
+  points        Int @default(0)
+  lastUpdated   DateTime @default(now()) @map("last_updated") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  salon Salon @relation(fields: [salonId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, salonId])
+  @@index([userId])
+  @@index([salonId])
+  @@map("loyalty_balances")
+}
+
+model CommissionInvoice {
+  id            String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  salonId       String @map("salon_id") @db.Uuid
+  issuedAt      DateTime @default(now()) @map("issued_at") @db.Timestamptz(6)
+  totalAmount   Float  @map("total_amount")
+
+  salon Salon @relation(fields: [salonId], references: [id], onDelete: Cascade)
+
+  @@index([salonId])
+  @@index([issuedAt])
+  @@map("commission_invoices")
+}
+
+model ConsentType {
+  slug        String @id @db.VarChar(50)
+  name        String
+  isMandatory Boolean @default(false) @map("is_mandatory")
+
+  consentVersions ConsentVersion[]
+
+  @@map("consent_types")
+}
+
+model ConsentVersion {
+  id                String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  consentTypeSlug   String @map("consent_type_slug") @db.VarChar(50)
+  versionTag        String @map("version_tag")
+  contentSummary    String @map("content_summary")
+  publishedAt       DateTime @default(now()) @map("published_at") @db.Timestamptz(6)
+
+  consentType ConsentType @relation(fields: [consentTypeSlug], references: [slug], onDelete: Cascade)
+  userConsents UserConsent[]
+
+  @@index([consentTypeSlug])
+  @@index([publishedAt])
+  @@map("consent_versions")
+}
+
+model UserConsent {
+  id                String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId            String @map("user_id") @db.Uuid
+  consentVersionId  String @map("consent_version_id") @db.Uuid
+  isGranted         Boolean @map("is_granted")
+  respondedAt       DateTime @default(now()) @map("responded_at") @db.Timestamptz(6)
+  revokedAt         DateTime? @map("revoked_at") @db.Timestamptz(6)
+  ipAddress         String? @map("ip_address") @db.VarChar(45)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  consentVersion ConsentVersion @relation(fields: [consentVersionId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([consentVersionId])
+  @@index([respondedAt])
+  @@map("user_consents")
+}
+
+model SalonUserRole {
+  id        String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  salonId   String @map("salon_id") @db.Uuid
+  userId    String @map("user_id") @db.Uuid
+  role      String @db.VarChar(50)
+  grantedAt DateTime @default(now()) @map("granted_at") @db.Timestamptz(6)
+
+  salon Salon @relation(fields: [salonId], references: [id], onDelete: Cascade, map: "salon_user_roles_salon_id_fkey")
+  user  User @relation("salonUserRolesAsUser", fields: [userId], references: [id], onDelete: Cascade, map: "salon_user_roles_user_id_fkey")
+  staff StaffProfile @relation("salonUserRolesAsStaff", fields: [userId], references: [userId], onDelete: Cascade, map: "salon_user_roles_staff_id_fkey")
+
+  @@unique([salonId, userId])
+  @@index([salonId])
+  @@index([userId])
+  @@map("salon_user_roles")
+}

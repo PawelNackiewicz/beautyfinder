@@ -1,6 +1,8 @@
+'use server';
+
+import { auth } from '@clerk/nextjs/server';
 import { Salon } from './mockData';
 
-// API response interface matching the backend structure
 interface ApiSalon {
   id: string;
   name: string;
@@ -13,13 +15,17 @@ interface ApiSalon {
   reviewCount: number;
 }
 
-const API_URL = process.env.API_URL || 'http://localhost:3001';
+function generateSlug(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with hyphens
+    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+}
 
-/**
- * Fetches premium salons from the API
- * @param location Optional location filter
- * @returns Array of salons transformed to match the UI structure
- */
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+
 export async function fetchPremiumSalons(location?: string): Promise<Salon[]> {
   try {
     const url = new URL(`${API_URL}/salons/premium`);
@@ -64,62 +70,72 @@ export async function fetchPremiumSalons(location?: string): Promise<Salon[]> {
   }
 }
 
-
-interface ApiMapSalon {
-  id: string;
-  slug: string;
-  name: string;
-  category: string;
-  rating: number;
-  reviews: number;
-  location: string;
-  imageUrl: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
+async function getAuthHeaders() {
+  const { getToken } = await auth();
+  const token = await getToken();
+  return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
-/**
- * Fetches salons for the map view
- */
-export async function fetchMapSalons(location?: string): Promise<Salon[]> {
-  try {
-    const url = new URL(`${API_URL}/salons/map`);
-    if (location) {
-      url.searchParams.append('location', location);
-    }
+export async function fetchUserProfile() {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_URL}/users/me`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+  });
 
-    const response = await fetch(url.toString(), {
-      cache: 'no-store',
-    });
-
-    if (!response.ok) {
-      throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-    }
-
-    const apiSalons: ApiMapSalon[] = await response.json();
-
-    // Transform is straightforward as the backend returns data close to UI model
-    return apiSalons.map(s => ({
-      ...s,
-      city: (s.location.split(',')[0] || '').trim(), 
-      citySlug: generateSlug((s.location.split(',')[0] || '').trim()),
-    }));
-  } catch (error) {
-    console.error('Error fetching map salons:', error);
-    return [];
+  if (!response.ok) {
+    throw new Error(`Failed to fetch user profile: ${response.statusText}`);
   }
+
+  return response.json();
 }
 
-/**
- * Generates a URL-friendly slug from a string
- */
-function generateSlug(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with hyphens
-    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
+export async function fetchUserAppointments() {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_URL}/users/me/appointments`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch appointments: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function fetchUserLoyalty() {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_URL}/users/me/loyalty`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch loyalty balances: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function fetchUserReviews() {
+  const headers = await getAuthHeaders();
+  const response = await fetch(`${API_URL}/users/me/reviews`, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...headers,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch reviews: ${response.statusText}`);
+  }
+
+  return response.json();
 }

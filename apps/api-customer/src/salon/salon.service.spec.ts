@@ -19,7 +19,7 @@ describe('SalonService', () => {
   describe('findAll', () => {
     it('should return all salons', () => {
       const salons = service.findAll();
-      
+
       expect(salons).toBeDefined();
       expect(Array.isArray(salons)).toBe(true);
       expect(salons.length).toBeGreaterThan(0);
@@ -45,12 +45,12 @@ describe('SalonService', () => {
     describe('without location filter', () => {
       it('should return only premium salons with active subscription', () => {
         const premiumSalons = service.getPremiumSalons();
-        
+
         expect(premiumSalons).toBeDefined();
         expect(Array.isArray(premiumSalons)).toBe(true);
 
         const now = new Date();
-        premiumSalons.forEach(salon => {
+        premiumSalons.forEach((salon) => {
           expect(salon.premiumUntil).not.toBeNull();
           expect(salon.premiumUntil!.getTime()).toBeGreaterThan(now.getTime());
         });
@@ -58,13 +58,13 @@ describe('SalonService', () => {
 
       it('should return maximum 10 salons', () => {
         const premiumSalons = service.getPremiumSalons();
-        
+
         expect(premiumSalons.length).toBeLessThanOrEqual(10);
       });
 
       it('should sort salons by reviewCount (descending) and then by rating (descending)', () => {
         const premiumSalons = service.getPremiumSalons();
-        
+
         for (let i = 0; i < premiumSalons.length - 1; i++) {
           const current = premiumSalons[i];
           const next = premiumSalons[i + 1];
@@ -81,8 +81,8 @@ describe('SalonService', () => {
 
       it('should not include salons with null premiumUntil', () => {
         const premiumSalons = service.getPremiumSalons();
-        
-        premiumSalons.forEach(salon => {
+
+        premiumSalons.forEach((salon) => {
           expect(salon.premiumUntil).not.toBeNull();
         });
       });
@@ -90,8 +90,8 @@ describe('SalonService', () => {
       it('should not include salons with expired premium status', () => {
         const premiumSalons = service.getPremiumSalons();
         const now = new Date();
-        
-        premiumSalons.forEach(salon => {
+
+        premiumSalons.forEach((salon) => {
           expect(salon.premiumUntil!.getTime()).toBeGreaterThan(now.getTime());
         });
       });
@@ -101,11 +101,11 @@ describe('SalonService', () => {
       it('should return only premium salons from specified city', () => {
         const location = 'Warszawa';
         const premiumSalons = service.getPremiumSalons(location);
-        
+
         expect(premiumSalons).toBeDefined();
         expect(Array.isArray(premiumSalons)).toBe(true);
 
-        premiumSalons.forEach(salon => {
+        premiumSalons.forEach((salon) => {
           expect(salon.city).toBe(location);
         });
       });
@@ -114,14 +114,14 @@ describe('SalonService', () => {
         const premiumSalonsLower = service.getPremiumSalons('warszawa');
         const premiumSalonsUpper = service.getPremiumSalons('WARSZAWA');
         const premiumSalonsMixed = service.getPremiumSalons('Warszawa');
-        
+
         expect(premiumSalonsLower.length).toBe(premiumSalonsUpper.length);
         expect(premiumSalonsLower.length).toBe(premiumSalonsMixed.length);
       });
 
       it('should return empty array if no premium salons in specified location', () => {
         const premiumSalons = service.getPremiumSalons('NonExistentCity');
-        
+
         expect(premiumSalons).toBeDefined();
         expect(Array.isArray(premiumSalons)).toBe(true);
         expect(premiumSalons.length).toBe(0);
@@ -129,13 +129,13 @@ describe('SalonService', () => {
 
       it('should return maximum 10 salons even with location filter', () => {
         const premiumSalons = service.getPremiumSalons('Warszawa');
-        
+
         expect(premiumSalons.length).toBeLessThanOrEqual(10);
       });
 
       it('should sort filtered salons by reviewCount and rating', () => {
         const premiumSalons = service.getPremiumSalons('Kraków');
-        
+
         for (let i = 0; i < premiumSalons.length - 1; i++) {
           const current = premiumSalons[i];
           const next = premiumSalons[i + 1];
@@ -152,8 +152,8 @@ describe('SalonService', () => {
         const location = 'Poznań';
         const premiumSalons = service.getPremiumSalons(location);
         const now = new Date();
-        
-        premiumSalons.forEach(salon => {
+
+        premiumSalons.forEach((salon) => {
           expect(salon.city).toBe(location);
           expect(salon.premiumUntil).not.toBeNull();
           expect(salon.premiumUntil!.getTime()).toBeGreaterThan(now.getTime());
@@ -164,14 +164,14 @@ describe('SalonService', () => {
     describe('edge cases', () => {
       it('should handle empty string location', () => {
         const premiumSalons = service.getPremiumSalons('');
-        
+
         expect(premiumSalons).toBeDefined();
         expect(Array.isArray(premiumSalons)).toBe(true);
       });
 
       it('should handle undefined location parameter', () => {
         const premiumSalons = service.getPremiumSalons(undefined);
-        
+
         expect(premiumSalons).toBeDefined();
         expect(Array.isArray(premiumSalons)).toBe(true);
         expect(premiumSalons.length).toBeGreaterThan(0);
@@ -179,8 +179,8 @@ describe('SalonService', () => {
 
       it('should return salons with valid rating range (0-5)', () => {
         const premiumSalons = service.getPremiumSalons();
-        
-        premiumSalons.forEach(salon => {
+
+        premiumSalons.forEach((salon) => {
           expect(salon.rating).toBeGreaterThanOrEqual(0);
           expect(salon.rating).toBeLessThanOrEqual(5);
         });
@@ -188,8 +188,8 @@ describe('SalonService', () => {
 
       it('should return salons with non-negative review count', () => {
         const premiumSalons = service.getPremiumSalons();
-        
-        premiumSalons.forEach(salon => {
+
+        premiumSalons.forEach((salon) => {
           expect(salon.reviewCount).toBeGreaterThanOrEqual(0);
         });
       });
