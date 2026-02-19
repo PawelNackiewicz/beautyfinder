@@ -33,6 +33,7 @@ model User {
   staffProfile             StaffProfile?
   salonUserRolesAsUser     SalonUserRole[] @relation("salonUserRolesAsUser")
   userConsents             UserConsent[]
+  salonRegistrations       SalonRegistration[]
 
   @@index([email])
   @@index([phone])
@@ -324,4 +325,53 @@ model SalonUserRole {
   @@index([salonId])
   @@index([userId])
   @@map("salon_user_roles")
+}
+
+model SalonRegistration {
+  id              String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  submittedBy     String? @map("submitted_by") @db.Uuid
+
+  // Step 1: Business Data
+  publicName      String @map("public_name") @db.VarChar(255)
+  companyName     String @map("company_name") @db.VarChar(255)
+  nip             String @db.VarChar(20)
+  mainCategory    String @map("main_category") @db.VarChar(100)
+  subcategories   Json   @default("[]")
+
+  // Step 2: Location
+  streetAddress   String @map("street_address") @db.VarChar(255)
+  floorUnit       String? @map("floor_unit") @db.VarChar(100)
+  postalCode      String @map("postal_code") @db.VarChar(20)
+  city            String @db.VarChar(100)
+  latitude        Decimal? @db.Decimal(10, 8)
+  longitude       Decimal? @db.Decimal(11, 8)
+  phone           String @db.VarChar(30)
+  email           String @db.VarChar(255)
+  website         String?
+
+  // Step 3: Presentation
+  coverPhotoUrl   String? @map("cover_photo_url")
+  logoUrl         String? @map("logo_url")
+  gallery         Json   @default("[]")
+  description     String
+  socialMedia     Json   @default("{}") @map("social_media")
+  amenities       Json   @default("[]")
+
+  // Step 4: Operational Settings
+  workingHours    Json   @map("working_hours")
+  technicalBreak  Json?  @map("technical_break")
+  stationCount    Int    @default(1) @map("station_count")
+  cancellationPolicy String @map("cancellation_policy") @db.VarChar(50)
+
+  // Metadata
+  status          String @default("PENDING") @db.VarChar(20)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  submitter       User? @relation(fields: [submittedBy], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([submittedBy])
+  @@index([createdAt])
+  @@map("salon_registrations")
 }

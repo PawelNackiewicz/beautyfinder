@@ -5,6 +5,7 @@
 CREATE EXTENSION IF NOT EXISTS "citext";
 
 -- Drop tables in reverse dependency order
+DROP TABLE IF EXISTS salon_registrations CASCADE;
 DROP TABLE IF EXISTS commission_invoices CASCADE;
 DROP TABLE IF EXISTS loyalty_balances CASCADE;
 DROP TABLE IF EXISTS reviews CASCADE;
@@ -343,6 +344,56 @@ CREATE INDEX idx_commission_invoices_salon ON commission_invoices(salon_id);
 CREATE INDEX idx_commission_invoices_issued ON commission_invoices(issued_at DESC);
 
 -- ============================================================================
+-- SALON REGISTRATION TABLES
+-- ============================================================================
+
+CREATE TABLE salon_registrations (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    submitted_by UUID REFERENCES users(id) ON DELETE SET NULL,
+
+    -- Step 1: Business Data
+    public_name VARCHAR(255) NOT NULL,
+    company_name VARCHAR(255) NOT NULL,
+    nip VARCHAR(20) NOT NULL,
+    main_category VARCHAR(100) NOT NULL,
+    subcategories JSONB NOT NULL DEFAULT '[]',
+
+    -- Step 2: Location
+    street_address VARCHAR(255) NOT NULL,
+    floor_unit VARCHAR(100),
+    postal_code VARCHAR(20) NOT NULL,
+    city VARCHAR(100) NOT NULL,
+    latitude DECIMAL(10, 8),
+    longitude DECIMAL(11, 8),
+    phone VARCHAR(30) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    website TEXT,
+
+    -- Step 3: Presentation
+    cover_photo_url TEXT,
+    logo_url TEXT,
+    gallery JSONB DEFAULT '[]',
+    description TEXT NOT NULL,
+    social_media JSONB DEFAULT '{}',
+    amenities JSONB DEFAULT '[]',
+
+    -- Step 4: Operational Settings
+    working_hours JSONB NOT NULL,
+    technical_break JSONB,
+    station_count INTEGER NOT NULL DEFAULT 1,
+    cancellation_policy VARCHAR(50) NOT NULL,
+
+    -- Metadata
+    status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_salon_registrations_status ON salon_registrations(status);
+CREATE INDEX idx_salon_registrations_submitted_by ON salon_registrations(submitted_by);
+CREATE INDEX idx_salon_registrations_created ON salon_registrations(created_at DESC);
+
+-- ============================================================================
 -- SAMPLE DATA INSERTS
 -- ============================================================================
 
@@ -490,3 +541,8 @@ INSERT INTO commission_invoices (salon_id, issued_at, total_amount) VALUES
 ('b0000000-0000-0000-0000-000000000001', '2026-01-31 23:59:59+00', 4250.00),
 ('b0000000-0000-0000-0000-000000000002', '2026-01-31 23:59:59+00', 3100.00),
 ('b0000000-0000-0000-0000-000000000001', '2026-02-14 23:59:59+00', 1875.50);
+
+-- Salon Registrations
+INSERT INTO salon_registrations (id, submitted_by, public_name, company_name, nip, main_category, subcategories, street_address, floor_unit, postal_code, city, latitude, longitude, phone, email, website, description, social_media, amenities, working_hours, station_count, cancellation_policy, status, created_at) VALUES
+('70000000-0000-0000-0000-000000000001', 'a0000000-0000-0000-0000-000000000001', 'Elegancja Beauty Studio', 'Elegancja Sp. z o.o.', '1234567890', 'Fryzjer', '["Strzyżenie", "Koloryzacja", "Stylizacja"]', 'ul. Marszałkowska 123', '2 piętro, lokal 5', '00-001', 'Warszawa', 52.2297, 21.0122, '+48 123 456 789', 'rezerwacje@elegancja.pl', 'https://www.elegancja.pl', 'Elegancja Beauty Studio to nowoczesny salon fryzjerski w samym sercu Warszawy. Specjalizujemy się w strzyżeniu, koloryzacji i stylizacji włosów. Nasz zespół doświadczonych stylistów zadba o Twój wygląd.', '{"instagram": "@elegancja_studio", "facebook": "facebook.com/elegancjastudio", "tiktok": "@elegancja"}', '["wifi", "parking", "air_conditioning", "card_payment"]', '{"monday": {"open": true, "start": "09:00", "end": "18:00"}, "tuesday": {"open": true, "start": "09:00", "end": "18:00"}, "wednesday": {"open": true, "start": "09:00", "end": "18:00"}, "thursday": {"open": true, "start": "09:00", "end": "18:00"}, "friday": {"open": true, "start": "09:00", "end": "20:00"}, "saturday": {"open": true, "start": "10:00", "end": "16:00"}, "sunday": {"open": false, "start": null, "end": null}}', 3, '24h', 'PENDING', '2026-02-18 10:30:00+00'),
+('70000000-0000-0000-0000-000000000002', 'a0000000-0000-0000-0000-000000000002', 'Glamour Nails Kraków', 'Anna Nowak Glamour', '9876543210', 'Paznokcie', '["Manicure", "Pedicure"]', 'ul. Floriańska 42', NULL, '31-019', 'Kraków', 50.0647, 19.9450, '+48 987 654 321', 'kontakt@glamournails.pl', NULL, 'Glamour Nails to salon specjalizujący się w profesjonalnej stylizacji paznokci. Oferujemy manicure hybrydowy, żelowy oraz pedicure spa. Używamy tylko najwyższej jakości produktów renomowanych marek.', '{"instagram": "@glamour_nails_krakow"}', '["wifi", "card_payment", "drinks"]', '{"monday": {"open": true, "start": "10:00", "end": "19:00"}, "tuesday": {"open": true, "start": "10:00", "end": "19:00"}, "wednesday": {"open": true, "start": "10:00", "end": "19:00"}, "thursday": {"open": true, "start": "10:00", "end": "19:00"}, "friday": {"open": true, "start": "10:00", "end": "20:00"}, "saturday": {"open": true, "start": "09:00", "end": "15:00"}, "sunday": {"open": false, "start": null, "end": null}}', 2, '12h', 'APPROVED', '2026-02-15 14:00:00+00');

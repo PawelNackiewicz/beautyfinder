@@ -11,6 +11,7 @@ import {
   PremiumSalonsSection,
   RecentVisitsSection,
   VerifiedExpertsSection,
+  AddSalonCTA,
 } from "./components";
 import { Footer, SiteHeader } from "components";
 import { SignedIn } from "@clerk/nextjs";
@@ -40,6 +41,7 @@ export default async function Home() {
         <LastMinuteSlotsSection slots={mockLastMinuteSlots} />
         <CityGridSection />
         <PremiumSalonsSection salons={premiumSalons} />
+        <AddSalonCTA />
       </main>
       <Footer />
     </div>
