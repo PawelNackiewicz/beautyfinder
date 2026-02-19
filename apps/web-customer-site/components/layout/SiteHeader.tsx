@@ -3,14 +3,14 @@
 import {
   MapPin,
   Search,
-  User,
   Calendar as CalendarIcon,
   LogIn,
   Gift,
 } from "lucide-react";
 import Link from "next/link";
 import { Button, Separator } from "@repo/ui/components";
-import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { UserProfileButton } from "./UserProfileButton";
 
 export const SiteHeader = () => {
   return (
@@ -75,24 +75,7 @@ export const SiteHeader = () => {
           </SignedOut>
 
           <SignedIn>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full"
-              asChild
-            >
-              <Link href="/profile">
-                <User className="w-5 h-5" />
-              </Link>
-            </Button>
-            <UserButton
-              afterSignOutUrl="/"
-              appearance={{
-                elements: {
-                  avatarBox: "w-9 h-9",
-                },
-              }}
-            />
+            <UserProfileButton />
           </SignedIn>
         </div>
       </div>
