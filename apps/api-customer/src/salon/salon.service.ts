@@ -12,7 +12,6 @@ export interface Salon {
   reviewCount: number;
 }
 
-
 export interface MapSalon {
   id: string;
   slug: string;
@@ -204,16 +203,16 @@ export class SalonService {
 
   getPremiumSalons(location?: string): Salon[] {
     const now = new Date();
-    
+
     // Filter premium salons (premiumUntil is not null and in the future)
     let premiumSalons = this.salons.filter(
-      salon => salon.premiumUntil !== null && salon.premiumUntil > now
+      (salon) => salon.premiumUntil !== null && salon.premiumUntil > now,
     );
 
     // Filter by location if specified
     if (location) {
       premiumSalons = premiumSalons.filter(
-        salon => salon.city.toLowerCase() === location.toLowerCase()
+        (salon) => salon.city.toLowerCase() === location.toLowerCase(),
       );
     }
 
@@ -229,49 +228,84 @@ export class SalonService {
     return premiumSalons.slice(0, 10);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   getMapSalons(location?: string): MapSalon[] {
-    const categories = ['fryzjer', 'paznokcie', 'makijaz', 'kosmetyczka', 'masaz', 'barber'];
+    const categories = [
+      'fryzjer',
+      'paznokcie',
+      'makijaz',
+      'kosmetyczka',
+      'masaz',
+      'barber',
+    ];
     // Central Poland cities
-    const cities = ['Warszawa', 'Łódź', 'Radom', 'Płock', 'Skierniewice', 'Piaseczno', 'Pruszków', 'Legionowo'];
+    const cities = [
+      'Warszawa',
+      'Łódź',
+      'Radom',
+      'Płock',
+      'Skierniewice',
+      'Piaseczno',
+      'Pruszków',
+      'Legionowo',
+    ];
 
     const salonNames = [
-      'Studio Urody Glow', 'Bella Beauty', 'Instytut Piękna', 'Beauty Lounge', 'Spa & Wellness', 
-      'Barber Shop', 'Nail Bar', 'MakeUp Studio', 'Estetica', 'Cosmetology Center',
-      'Golden Hands', 'Diamond Spa', 'Pure Beauty', 'Urban Retreat', 'Velvet Touch',
-      'Elite Grooming', 'The Man Cave', 'Look Good', 'Shine Bright', 'Modern Cuts'
+      'Studio Urody Glow',
+      'Bella Beauty',
+      'Instytut Piękna',
+      'Beauty Lounge',
+      'Spa & Wellness',
+      'Barber Shop',
+      'Nail Bar',
+      'MakeUp Studio',
+      'Estetica',
+      'Cosmetology Center',
+      'Golden Hands',
+      'Diamond Spa',
+      'Pure Beauty',
+      'Urban Retreat',
+      'Velvet Touch',
+      'Elite Grooming',
+      'The Man Cave',
+      'Look Good',
+      'Shine Bright',
+      'Modern Cuts',
     ];
 
     const count = 50;
     const salons: MapSalon[] = [];
 
     for (let i = 0; i < count; i++) {
-        // Central Poland bounds (approx. covering Warsaw, Lodz and surrounding areas)
-        // Lat: 51.5 - 52.5
-        // Lng: 19.5 - 21.5
-        const lat = 51.5 + Math.random() * (52.5 - 51.5);
-        const lng = 19.5 + Math.random() * (21.5 - 19.5);
+      // Central Poland bounds (approx. covering Warsaw, Lodz and surrounding areas)
+      // Lat: 51.5 - 52.5
+      // Lng: 19.5 - 21.5
+      const lat = 51.5 + Math.random() * (52.5 - 51.5);
+      const lng = 19.5 + Math.random() * (21.5 - 19.5);
 
-        const category = categories[Math.floor(Math.random() * categories.length)];
-        const city = cities[Math.floor(Math.random() * cities.length)];
-        const nameBase = salonNames[Math.floor(Math.random() * salonNames.length)];
-        const id = `mock-${i + 1}`;
+      const category =
+        categories[Math.floor(Math.random() * categories.length)];
+      const city = cities[Math.floor(Math.random() * cities.length)];
+      const nameBase =
+        salonNames[Math.floor(Math.random() * salonNames.length)];
+      const id = `mock-${i + 1}`;
 
-        salons.push({
-            id,
-            slug: `salon-${id}`,
-            name: `${nameBase} ${i + 1}`,
-            category,
-            rating: Number((3.5 + Math.random() * 1.5).toFixed(1)),
-            reviews: Math.floor(Math.random() * 500) + 10,
-            location: `${city}, ul. Losowa ${Math.floor(Math.random() * 100)}`,
-            imageUrl: `https://picsum.photos/seed/${id}/400/300`,
-            coordinates: {
-                lat,
-                lng
-            }
-        });
+      salons.push({
+        id,
+        slug: `salon-${id}`,
+        name: `${nameBase} ${i + 1}`,
+        category,
+        rating: Number((3.5 + Math.random() * 1.5).toFixed(1)),
+        reviews: Math.floor(Math.random() * 500) + 10,
+        location: `${city}, ul. Losowa ${Math.floor(Math.random() * 100)}`,
+        imageUrl: `https://picsum.photos/seed/${id}/400/300`,
+        coordinates: {
+          lat,
+          lng,
+        },
+      });
     }
-    
+
     return salons;
   }
 }

@@ -13,7 +13,7 @@ export interface SalonReviewStats {
 @Injectable()
 export class ReviewService {
   private mockReviews: Record<string, Review[]> = {
-    // Mock data for some random salon IDs - we can reuse IDs if we knew them, 
+    // Mock data for some random salon IDs - we can reuse IDs if we knew them,
     // but for now we will generate data dynamically or have some static ones.
     'salon-1': [
       { text: 'Great service!', rating: 5 },
@@ -24,9 +24,7 @@ export class ReviewService {
       { text: 'I love this place!', rating: 5 },
       { text: 'Will come again.', rating: 4 },
     ],
-    'salon-3': [
-      { text: 'Avoid at all costs.', rating: 1 },
-    ],
+    'salon-3': [{ text: 'Avoid at all costs.', rating: 1 }],
   };
 
   private readonly DEFAULT_REVIEWS: Review[] = [
@@ -44,12 +42,12 @@ export class ReviewService {
       let reviews = this.mockReviews[salonId];
 
       if (!reviews) {
-         // Create deterministic pseudo-random reviews based on salonId string to look consistent
-         reviews = this.generateMockReviews(salonId);
+        // Create deterministic pseudo-random reviews based on salonId string to look consistent
+        reviews = this.generateMockReviews(salonId);
       }
 
       const averageRating = this.calculateAverage(reviews);
-      
+
       results[salonId] = {
         averageRating,
         reviews,
@@ -63,13 +61,14 @@ export class ReviewService {
     // Simple deterministic behavior based on char codes
     const count = (seed.charCodeAt(0) % 3) + 1; // 1 to 3 reviews
     const generated: Review[] = [];
-    
+
     for (let i = 0; i < count; i++) {
-        const index = (seed.charCodeAt(i % seed.length) + i) % this.DEFAULT_REVIEWS.length;
-        generated.push(this.DEFAULT_REVIEWS[index]);
+      const index =
+        (seed.charCodeAt(i % seed.length) + i) % this.DEFAULT_REVIEWS.length;
+      generated.push(this.DEFAULT_REVIEWS[index]);
     }
 
-    // Add a bit of randomness to rating to make it look real if needed, 
+    // Add a bit of randomness to rating to make it look real if needed,
     // but reusing objects is fine for a mock.
     return generated;
   }

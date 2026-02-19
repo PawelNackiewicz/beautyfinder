@@ -6,9 +6,9 @@ export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Post('batch')
-  async getReviews(
-    @Body() body: { salonIds: string[] }
-  ): Promise<Record<string, SalonReviewStats>> {
+  getReviews(
+    @Body() body: { salonIds: string[] },
+  ): Record<string, SalonReviewStats> {
     return this.reviewService.getReviewsForSalons(body.salonIds);
   }
 }
