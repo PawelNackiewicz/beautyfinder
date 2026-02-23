@@ -223,3 +223,37 @@ erDiagram
         timestamptz issued_at
         numeric total_amount
     }
+
+    users ||--o{ salon_registrations : "submits"
+
+    salon_registrations {
+        uuid id PK
+        uuid submitted_by FK "User who submitted"
+        varchar public_name "B2C display name"
+        varchar company_name "Official company name"
+        varchar nip "Tax ID (10 digits)"
+        varchar main_category "Primary category"
+        jsonb subcategories "Array of subcategory strings"
+        varchar street_address
+        varchar floor_unit
+        varchar postal_code
+        varchar city
+        decimal latitude "DECIMAL(10, 8)"
+        decimal longitude "DECIMAL(11, 8)"
+        varchar phone
+        varchar email
+        text website
+        text cover_photo_url
+        text logo_url
+        jsonb gallery "Array of image URLs"
+        text description "Min 150 chars"
+        jsonb social_media "instagram, facebook, tiktok"
+        jsonb amenities "Array of amenity slugs"
+        jsonb working_hours "Per-day schedule"
+        jsonb technical_break "Start/end time"
+        integer station_count
+        varchar cancellation_policy
+        varchar status "PENDING, APPROVED, REJECTED"
+        timestamptz created_at
+        timestamptz updated_at
+    }

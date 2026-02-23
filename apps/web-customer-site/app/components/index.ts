@@ -5,3 +5,4 @@ export { RecentVisitsSection } from './RecentVisitsSection';
 export { VerifiedExpertsSection } from './VerifiedExpertsSection';
 export { LastMinuteSlotsSection } from './LastMinuteSlotsSection';
 export { CityGridSection } from './CityGridSection';
+export { AddSalonCTA } from './AddSalonCTA';
