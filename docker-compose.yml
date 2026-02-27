@@ -1,0 +1,78 @@
+# docker-compose.yml — Beautyfinder full development stack
+# Usage:
+#   docker compose up              — Start DB + API
+#   docker compose up postgres     — Start DB only (for pnpm dev workflow)
+#   docker compose up --build api  — Rebuild and start API
+#   docker compose down -v         — Stop all and remove volumes
+
+services:
+  # ── PostgreSQL ──────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:17-alpine
+    container_name: bf-postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: strongpassword123
+      POSTGRES_DB: jsonbdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./pg-playground/postgres/init-scripts:/docker-entrypoint-initdb.d
+    networks:
+      - beautyfinder
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d jsonbdb"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  # ── pgAdmin ────────────────────────────────────────────────────────────
+  pgadmin:
+    image: dpage/pgadmin4:9.4
+    container_name: bf-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin@example.com
+      PGADMIN_DEFAULT_PASSWORD: pgadmin_password
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./pg-playground/pgadmin/servers.json:/pgadmin4/servers.json
+    networks:
+      - beautyfinder
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── NestJS API ─────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: apps/api-customer/Dockerfile
+    container_name: bf-api
+    environment:
+      DATABASE_URL: postgresql://admin:strongpassword123@postgres:5432/jsonbdb
+      PORT: 3001
+      CORS_ORIGINS: http://localhost:3000,http://localhost:5173
+      CLERK_SECRET_KEY: ${CLERK_SECRET_KEY:-}
+      NODE_ENV: production
+    ports:
+      - "3001:3001"
+    networks:
+      - beautyfinder
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+networks:
+  beautyfinder:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  pgadmin_data:

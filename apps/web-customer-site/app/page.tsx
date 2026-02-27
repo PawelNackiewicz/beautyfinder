@@ -18,7 +18,7 @@ import { SignedIn } from "@clerk/nextjs";
 import { auth, currentUser } from "@clerk/nextjs/server";
 
 export default async function Home() {
-  const [premiumSalons] = await Promise.all([fetchPremiumSalons()]);
+  const premiumSalons = await fetchPremiumSalons();
   const { userId } = await auth();
   const user = userId ? await currentUser() : null;
 

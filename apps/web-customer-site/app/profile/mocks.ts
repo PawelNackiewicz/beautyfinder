@@ -6,10 +6,17 @@ import type {
 } from "./types";
 
 export const mockUser: User = {
+    id: "mock-user-1",
     firstName: "Anna",
     lastName: "Kowalska",
+    fullName: "Anna Kowalska",
     email: "anna.kowalska@example.com",
     phone: "+48 123 456 789",
+    gender: null,
+    dateOfBirth: null,
+    authProvider: null,
+    createdAt: "2024-01-01T00:00:00.000Z",
+    lastSyncedAt: null,
     allergies: "Uczulenie na parabeny i silikony. Wrażliwa skóra głowy.",
     avatarUrl: "",
 };

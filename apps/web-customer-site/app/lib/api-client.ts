@@ -1,7 +1,6 @@
-'use server';
-
 import { auth } from '@clerk/nextjs/server';
 import { Salon } from './mockData';
+import { generateSlug } from './utils';
 
 interface ApiSalon {
   id: string;
@@ -13,15 +12,6 @@ interface ApiSalon {
   premiumUntil: string | null;
   rating: number;
   reviewCount: number;
-}
-
-function generateSlug(text: string): string {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
-    .replace(/[^a-z0-9]+/g, '-') // Replace non-alphanumeric with hyphens
-    .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
 }
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
@@ -45,7 +35,7 @@ export async function fetchPremiumSalons(location?: string): Promise<Salon[]> {
     const apiSalons: ApiSalon[] = await response.json();
 
     // Transform API data to match the UI's Salon interface
-    return apiSalons.map((apiSalon, index) => ({
+    return apiSalons.map((apiSalon) => ({
       id: apiSalon.id,
       slug: generateSlug(apiSalon.name),
       name: apiSalon.name,
@@ -56,12 +46,7 @@ export async function fetchPremiumSalons(location?: string): Promise<Salon[]> {
       city: apiSalon.city,
       citySlug: generateSlug(apiSalon.city),
       imageUrl: `https://picsum.photos/seed/salon${apiSalon.id}/400/300`,
-      coordinates: {
-        // Placeholder coordinates, could be enhanced with geocoding
-        // Randomize coordinates around Warsaw for better visual if no real coords
-        lat: 52.2297 + (Math.random() - 0.5) * 0.1,
-        lng: 21.0122 + (Math.random() - 0.5) * 0.1,
-      },
+      coordinates: null,
     }));
   } catch (error) {
     console.error('Error fetching premium salons:', error);
@@ -70,7 +55,7 @@ export async function fetchPremiumSalons(location?: string): Promise<Salon[]> {
   }
 }
 
-async function getAuthHeaders() {
+async function getAuthHeaders(): Promise<Record<string, string>> {
   const { getToken } = await auth();
   const token = await getToken();
   return token ? { Authorization: `Bearer ${token}` } : {};

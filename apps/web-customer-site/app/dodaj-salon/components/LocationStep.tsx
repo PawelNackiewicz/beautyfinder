@@ -48,15 +48,21 @@ export function LocationStep({ onNext, onBack }: LocationStepProps) {
     }
   }, [isHydrated, getStepData, form]);
 
-  // Auto-save on change
+  // Auto-save on change with 400ms debounce to avoid saving on every keystroke
   const watchAll = form.watch();
   const saveData = useCallback(() => {
     saveStepData(form.getValues());
   }, [saveStepData, form]);
 
+  const saveDataRef = useRef(saveData);
+  saveDataRef.current = saveData;
+
   useEffect(() => {
-    saveData();
-  }, [watchAll, saveData]);
+    const timeout = setTimeout(() => {
+      saveDataRef.current();
+    }, 400);
+    return () => clearTimeout(timeout);
+  }, [watchAll]);
 
   // Initialize Leaflet map
   useEffect(() => {
@@ -139,8 +145,13 @@ export function LocationStep({ onNext, onBack }: LocationStepProps) {
 
   if (!isHydrated) return null;
 
+  // react-hook-form version mismatch between @repo/ui and this package requires casting
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const formProps = form as any;
+  const { control } = formProps;
+
   return (
-    <Form {...(form as any)}>
+    <Form {...formProps}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="flex items-center gap-3 mb-6">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -157,7 +168,7 @@ export function LocationStep({ onNext, onBack }: LocationStepProps) {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="md:col-span-2">
             <FormField
-              control={form.control as any}
+              control={control}
               name="streetAddress"
               render={({ field }) => (
                 <FormItem>
@@ -174,7 +185,7 @@ export function LocationStep({ onNext, onBack }: LocationStepProps) {
           </div>
 
           <FormField
-            control={form.control as any}
+            control={control}
             name="floorUnit"
             render={({ field }) => (
               <FormItem>
@@ -194,7 +205,7 @@ export function LocationStep({ onNext, onBack }: LocationStepProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
-            control={form.control as any}
+            control={control}
             name="postalCode"
             render={({ field }) => (
               <FormItem>
@@ -210,7 +221,7 @@ export function LocationStep({ onNext, onBack }: LocationStepProps) {
           />
 
           <FormField
-            control={form.control as any}
+            control={control}
             name="city"
             render={({ field }) => (
               <FormItem>
@@ -244,7 +255,7 @@ export function LocationStep({ onNext, onBack }: LocationStepProps) {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <FormField
-            control={form.control as any}
+            control={control}
             name="phone"
             render={({ field }) => (
               <FormItem>
@@ -261,7 +272,7 @@ export function LocationStep({ onNext, onBack }: LocationStepProps) {
           />
 
           <FormField
-            control={form.control as any}
+            control={control}
             name="email"
             render={({ field }) => (
               <FormItem>
@@ -279,7 +290,7 @@ export function LocationStep({ onNext, onBack }: LocationStepProps) {
         </div>
 
         <FormField
-          control={form.control as any}
+          control={control}
           name="website"
           render={({ field }) => (
             <FormItem>

@@ -1,14 +1,16 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { ReviewService, SalonReviewStats } from './review.service';
+import { ReviewService } from './review.service';
+import { BatchReviewsDto } from './dto/batch-reviews.dto';
+import type { BatchReviewStatsResponse } from './interfaces/review.interface';
 
 @Controller('reviews')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
 
   @Post('batch')
-  getReviews(
-    @Body() body: { salonIds: string[] },
-  ): Record<string, SalonReviewStats> {
-    return this.reviewService.getReviewsForSalons(body.salonIds);
+  async getReviews(
+    @Body() dto: BatchReviewsDto,
+  ): Promise<BatchReviewStatsResponse> {
+    return this.reviewService.getReviewsForSalons(dto.salonIds);
   }
 }

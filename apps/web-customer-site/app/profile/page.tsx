@@ -2,14 +2,12 @@ import { Typography } from "@repo/ui/components";
 import { UpcomingAppointmentCard } from "./components/UpcomingAppointmentCard";
 import { PastVisitsList } from "./components/PastVisitsList";
 import { UserProfileCard } from "./components/UserProfileCard";
-import { VouchersAndRewardsCard } from "./components/VouchersAndRewardsCard";
 import { SiteHeader } from "components";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import {
   fetchUserProfile,
   fetchUserAppointments,
-  fetchUserLoyalty,
 } from "../lib/api-client";
 
 export default async function ProfilePage() {
@@ -23,13 +21,11 @@ export default async function ProfilePage() {
   // Fetch real data from API
   let user = null;
   let appointments = [];
-  let loyalty = [];
 
   try {
-    [user, appointments, loyalty] = await Promise.all([
+    [user, appointments] = await Promise.all([
       fetchUserProfile(),
       fetchUserAppointments(),
-      fetchUserLoyalty(),
     ]);
   } catch (error) {
     console.error("Failed to fetch user data:", error);
@@ -41,17 +37,6 @@ export default async function ProfilePage() {
 
   // Get past visits (rest of appointments)
   const pastVisits = appointments?.slice(1) || [];
-
-  // Convert loyalty balances to vouchers format
-  const vouchersAndRewards = {
-    totalPoints:
-      loyalty?.reduce((sum: number, lb: any) => sum + lb.points, 0) || 0,
-    salons:
-      loyalty?.map((lb: any) => ({
-        salonName: lb.salon.slug,
-        points: lb.points,
-      })) || [],
-  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -79,7 +64,6 @@ export default async function ProfilePage() {
 
           {user && <UserProfileCard user={user} />}
 
-          {/* <VouchersAndRewardsCard data={vouchersAndRewards} /> */}
         </div>
       </main>
     </div>

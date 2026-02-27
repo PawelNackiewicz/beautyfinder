@@ -2,13 +2,15 @@
 
 import { useState } from "react";
 import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Input, Label } from "@repo/ui/components";
-import { Check, Gift, CreditCard } from "lucide-react";
+import { Gift, CreditCard } from "lucide-react";
 import Link from "next/link";
 
 export default function BuyVoucherPage() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(100);
   const [customAmount, setCustomAmount] = useState<string>("");
   const [email, setEmail] = useState("");
+  const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   const handleAmountSelect = (amount: number) => {
     setSelectedAmount(amount);
@@ -26,18 +28,22 @@ export default function BuyVoucherPage() {
   const finalAmount = selectedAmount || (customAmount ? parseInt(customAmount) : 0);
 
   const handleBuy = () => {
-    // Basic validation
+    setStatus('idle');
+    setErrorMessage("");
+
     if (!finalAmount || finalAmount <= 0) {
-      alert("Proszę wybrać lub wpisać kwotę bonu.");
+      setStatus('error');
+      setErrorMessage("Proszę wybrać lub wpisać kwotę bonu.");
       return;
     }
     if (!email) {
-      alert("Proszę podać adres e-mail.");
+      setStatus('error');
+      setErrorMessage("Proszę podać adres e-mail.");
       return;
     }
 
     // Mock purchase logic
-    alert(`Dziękujemy! Kupiono bon o wartości ${finalAmount} PLN. Kod zostanie wysłany na ${email}.`);
+    setStatus('success');
   };
 
   return (
@@ -134,11 +140,21 @@ export default function BuyVoucherPage() {
             </div>
 
           </CardContent>
-          <CardFooter>
+          <CardFooter className="flex-col gap-3">
             <Button size="lg" className="w-full gap-2" onClick={handleBuy} disabled={!finalAmount || finalAmount <= 0}>
               <CreditCard className="w-4 h-4" />
               Kup Teraz
             </Button>
+            {status === 'success' && (
+              <div className="w-full rounded-md bg-green-50 border border-green-200 px-4 py-3 text-sm text-green-800">
+                Dziękujemy! Kupiono bon o wartości {finalAmount} PLN. Kod zostanie wysłany na {email}.
+              </div>
+            )}
+            {status === 'error' && (
+              <div className="w-full rounded-md bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-800">
+                {errorMessage}
+              </div>
+            )}
           </CardFooter>
         </Card>
         
