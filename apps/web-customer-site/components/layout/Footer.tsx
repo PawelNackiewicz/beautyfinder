@@ -26,7 +26,7 @@ export const Footer = () => {
             <ul className="space-y-2 text-sm text-foreground/70">
               <li>
                 <Link
-                  href="/szukaj"
+                  href="/uslugi"
                   className="hover:text-primary transition-colors"
                 >
                   Znajdź salon
@@ -117,7 +117,7 @@ export const Footer = () => {
 
         <div className="border-t border-border/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-foreground/60">
-            © 2024 BeautyFinder. Wszelkie prawa zastrzeżone.
+            © 2025 BeautyFinder. Wszelkie prawa zastrzeżone.
           </p>
           <div className="flex gap-6 text-sm text-foreground/60">
             <Link

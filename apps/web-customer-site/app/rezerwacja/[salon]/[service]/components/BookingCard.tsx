@@ -54,8 +54,7 @@ export function BookingCard({
         <Alert className="border-yellow-300 bg-yellow-50">
           <AlertTriangle className="h-4 w-4 text-yellow-600" />
           <AlertDescription className="text-sm text-yellow-800">
-            Informacja: Alergy i terminy. Niezbędne się być odwiedzony skutkiem
-            zapalenia na Gminu Libą.
+            Przy pierwszej wizycie prosimy o poinformowanie specjalisty o alergiach i uczuleniach.
           </AlertDescription>
         </Alert>
 

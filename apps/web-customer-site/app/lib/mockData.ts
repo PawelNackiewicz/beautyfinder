@@ -27,10 +27,8 @@ export interface Salon {
   city: string; // city slug or Name? Let's use name to match existing usage in ListView but we might want slug too.
   citySlug: string; 
   imageUrl: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
+  // Used for map display — may be null when real geocoding is unavailable
+  coordinates?: { lat: number; lng: number } | null;
 }
 
 export const SALONS: Salon[] = [

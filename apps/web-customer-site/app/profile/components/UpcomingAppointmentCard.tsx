@@ -18,7 +18,7 @@ export function UpcomingAppointmentCard({
   appointment,
 }: UpcomingAppointmentCardProps) {
   return (
-    <Card className="order-primary">
+    <Card className="border border-primary">
       <CardContent className="p-6">
         <div className="flex gap-4">
           {/* Salon Image */}

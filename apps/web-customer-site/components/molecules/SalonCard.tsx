@@ -25,8 +25,8 @@ export function SalonCard({ salon }: SalonCardProps) {
         <Image
           src={salon.imageUrl}
           alt={salon.name}
-          width={"800"}
-          height={"600"}
+          width={800}
+          height={600}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
         <Button
@@ -64,7 +64,7 @@ export function SalonCard({ salon }: SalonCardProps) {
           <Link href={`/salon/${salon.slug}`}>Szczegóły</Link>
         </Button>
         <Button asChild>
-          <Link href={`/rezerwacja/${salon.slug}/service`}>Zarezerwuj</Link>
+          <Link href={`/salon/${salon.slug}`}>Zarezerwuj</Link>
         </Button>
       </CardFooter>
     </Card>
