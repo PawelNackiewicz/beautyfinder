@@ -1,311 +1,213 @@
 import { Injectable } from '@nestjs/common';
-
-export interface Salon {
-  id: string;
-  name: string;
-  address: string;
-  city: string;
-  postalCode: string;
-  phone: string;
-  premiumUntil: Date | null;
-  rating: number;
-  reviewCount: number;
-}
-
-export interface MapSalon {
-  id: string;
-  slug: string;
-  name: string;
-  category: string;
-  rating: number;
-  reviews: number;
-  location: string;
-  imageUrl: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
-}
+import { PrismaService } from '../prisma/prisma.service';
+import {
+  PaginationQueryDto,
+  createPaginatedResponse,
+  type PaginatedResponse,
+} from '../common';
+import type {
+  SalonListItemResponse,
+  MapSalonResponse,
+} from './interfaces/salon.interface';
 
 @Injectable()
 export class SalonService {
-  private readonly salons: Salon[] = [
-    {
-      id: '1',
-      name: 'Studio Urody Glow',
-      address: 'ul. Marszałkowska 10/12',
-      city: 'Warszawa',
-      postalCode: '00-001',
-      phone: '+48 22 123 45 67',
-      premiumUntil: new Date('2027-06-30'),
-      rating: 4.8,
-      reviewCount: 245,
-    },
-    {
-      id: '2',
-      name: 'Bella Beauty',
-      address: 'ul. Floriańska 15',
-      city: 'Kraków',
-      postalCode: '31-019',
-      phone: '+48 12 987 65 43',
-      premiumUntil: new Date('2027-12-31'),
-      rating: 4.9,
-      reviewCount: 312,
-    },
-    {
-      id: '3',
-      name: 'Instytut Piękna Sopot',
-      address: 'ul. Bohaterów Monte Cassino 20',
-      city: 'Sopot',
-      postalCode: '81-704',
-      phone: '+48 58 555 11 22',
-      premiumUntil: null,
-      rating: 4.5,
-      reviewCount: 89,
-    },
-    {
-      id: '4',
-      name: 'Poznań Beauty Lounge',
-      address: 'ul. Półwiejska 32',
-      city: 'Poznań',
-      postalCode: '61-888',
-      phone: '+48 61 777 88 99',
-      premiumUntil: new Date('2026-09-15'),
-      rating: 4.7,
-      reviewCount: 178,
-    },
-    {
-      id: '5',
-      name: 'Wrocławskie Spa',
-      address: 'Rynek 5',
-      city: 'Wrocław',
-      postalCode: '50-106',
-      phone: '+48 71 333 44 55',
-      premiumUntil: new Date('2026-11-20'),
-      rating: 4.6,
-      reviewCount: 156,
-    },
-    {
-      id: '6',
-      name: 'Lux Beauty Warszawa',
-      address: 'ul. Nowy Świat 25',
-      city: 'Warszawa',
-      postalCode: '00-029',
-      phone: '+48 22 234 56 78',
-      premiumUntil: new Date('2027-03-31'),
-      rating: 4.9,
-      reviewCount: 421,
-    },
-    {
-      id: '7',
-      name: 'Glamour Studio Kraków',
-      address: 'ul. Grodzka 8',
-      city: 'Kraków',
-      postalCode: '31-044',
-      phone: '+48 12 876 54 32',
-      premiumUntil: new Date('2026-08-25'),
-      rating: 4.8,
-      reviewCount: 289,
-    },
-    {
-      id: '8',
-      name: 'Elite Beauty Gdańsk',
-      address: 'ul. Długa 12',
-      city: 'Gdańsk',
-      postalCode: '80-827',
-      phone: '+48 58 666 77 88',
-      premiumUntil: new Date('2026-10-10'),
-      rating: 4.7,
-      reviewCount: 203,
-    },
-    {
-      id: '9',
-      name: 'Premium Spa Wrocław',
-      address: 'ul. Świdnicka 40',
-      city: 'Wrocław',
-      postalCode: '50-028',
-      phone: '+48 71 444 55 66',
-      premiumUntil: new Date('2027-01-15'),
-      rating: 4.9,
-      reviewCount: 367,
-    },
-    {
-      id: '10',
-      name: 'Royal Beauty Poznań',
-      address: 'ul. Święty Marcin 29',
-      city: 'Poznań',
-      postalCode: '61-806',
-      phone: '+48 61 888 99 00',
-      premiumUntil: new Date('2026-07-30'),
-      rating: 4.8,
-      reviewCount: 234,
-    },
-    {
-      id: '11',
-      name: 'Diamond Spa Warszawa',
-      address: 'al. Jerozolimskie 65',
-      city: 'Warszawa',
-      postalCode: '00-697',
-      phone: '+48 22 345 67 89',
-      premiumUntil: new Date('2026-12-31'),
-      rating: 4.7,
-      reviewCount: 198,
-    },
-    {
-      id: '12',
-      name: 'Prestige Beauty Łódź',
-      address: 'ul. Piotrkowska 104',
-      city: 'Łódź',
-      postalCode: '90-926',
-      phone: '+48 42 222 33 44',
-      premiumUntil: new Date('2026-06-15'),
-      rating: 4.6,
-      reviewCount: 145,
-    },
-    {
-      id: '13',
-      name: 'Exclusive Spa Katowice',
-      address: 'ul. 3 Maja 15',
-      city: 'Katowice',
-      postalCode: '40-096',
-      phone: '+48 32 555 66 77',
-      premiumUntil: new Date('2027-02-28'),
-      rating: 4.8,
-      reviewCount: 267,
-    },
-    {
-      id: '14',
-      name: 'VIP Beauty Gdynia',
-      address: 'ul. Świętojańska 43',
-      city: 'Gdynia',
-      postalCode: '81-391',
-      phone: '+48 58 777 88 99',
-      premiumUntil: new Date('2027-05-20'),
-      rating: 4.9,
-      reviewCount: 334,
-    },
-    {
-      id: '15',
-      name: 'Platinum Spa Szczecin',
-      address: 'al. Niepodległości 36',
-      city: 'Szczecin',
-      postalCode: '70-404',
-      phone: '+48 91 333 44 55',
-      premiumUntil: new Date('2026-09-30'),
-      rating: 4.7,
-      reviewCount: 189,
-    },
-  ];
+  constructor(private readonly prisma: PrismaService) {}
 
-  findAll(): Salon[] {
-    return this.salons;
-  }
+  async findAll(
+    pagination: PaginationQueryDto,
+  ): Promise<PaginatedResponse<SalonListItemResponse>> {
+    const [salons, total] = await Promise.all([
+      this.prisma.salon.findMany({
+        skip: pagination.skip,
+        take: pagination.limit,
+        include: {
+          locations: {
+            take: 1,
+            select: {
+              id: true,
+              name: true,
+              streetAddress: true,
+              postalCode: true,
+              city: true,
+              country: true,
+              latitude: true,
+              longitude: true,
+            },
+          },
+          reviews: {
+            select: { rating: true },
+          },
+          _count: { select: { reviews: true } },
+        },
+      }),
+      this.prisma.salon.count(),
+    ]);
 
-  getPremiumSalons(location?: string): Salon[] {
-    const now = new Date();
-
-    // Filter premium salons (premiumUntil is not null and in the future)
-    let premiumSalons = this.salons.filter(
-      (salon) => salon.premiumUntil !== null && salon.premiumUntil > now,
-    );
-
-    // Filter by location if specified
-    if (location) {
-      premiumSalons = premiumSalons.filter(
-        (salon) => salon.city.toLowerCase() === location.toLowerCase(),
-      );
-    }
-
-    // Sort by review count (descending) and then by rating (descending)
-    premiumSalons.sort((a, b) => {
-      if (b.reviewCount !== a.reviewCount) {
-        return b.reviewCount - a.reviewCount;
-      }
-      return b.rating - a.rating;
+    const mapped: SalonListItemResponse[] = salons.map((salon) => {
+      const loc = salon.locations[0] ?? null;
+      return {
+        id: salon.id,
+        slug: salon.slug,
+        currency: salon.currency,
+        primaryLocation: loc
+          ? {
+              ...loc,
+              latitude: loc.latitude ? Number(loc.latitude) : null,
+              longitude: loc.longitude ? Number(loc.longitude) : null,
+            }
+          : null,
+        reviewStats: {
+          averageRating: this.calculateAverageRating(
+            salon.reviews.map((r) => r.rating),
+          ),
+          reviewCount: salon._count.reviews,
+        },
+      };
     });
 
-    // Return top 10
-    return premiumSalons.slice(0, 10);
+    return createPaginatedResponse(
+      mapped,
+      total,
+      pagination.page,
+      pagination.limit,
+    );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  getMapSalons(location?: string): MapSalon[] {
-    const categories = [
-      'fryzjer',
-      'paznokcie',
-      'makijaz',
-      'kosmetyczka',
-      'masaz',
-      'barber',
-    ];
-    // Central Poland cities
-    const cities = [
-      'Warszawa',
-      'Łódź',
-      'Radom',
-      'Płock',
-      'Skierniewice',
-      'Piaseczno',
-      'Pruszków',
-      'Legionowo',
-    ];
+  async getPremiumSalons(location?: string): Promise<SalonListItemResponse[]> {
+    // Premium salons are identified by salon_settings containing a premium flag
+    // For now, we return top-rated salons, optionally filtered by location
+    const where = location
+      ? {
+          locations: {
+            some: {
+              city: { equals: location, mode: 'insensitive' as const },
+            },
+          },
+        }
+      : {};
 
-    const salonNames = [
-      'Studio Urody Glow',
-      'Bella Beauty',
-      'Instytut Piękna',
-      'Beauty Lounge',
-      'Spa & Wellness',
-      'Barber Shop',
-      'Nail Bar',
-      'MakeUp Studio',
-      'Estetica',
-      'Cosmetology Center',
-      'Golden Hands',
-      'Diamond Spa',
-      'Pure Beauty',
-      'Urban Retreat',
-      'Velvet Touch',
-      'Elite Grooming',
-      'The Man Cave',
-      'Look Good',
-      'Shine Bright',
-      'Modern Cuts',
-    ];
-
-    const count = 50;
-    const salons: MapSalon[] = [];
-
-    for (let i = 0; i < count; i++) {
-      // Central Poland bounds (approx. covering Warsaw, Lodz and surrounding areas)
-      // Lat: 51.5 - 52.5
-      // Lng: 19.5 - 21.5
-      const lat = 51.5 + Math.random() * (52.5 - 51.5);
-      const lng = 19.5 + Math.random() * (21.5 - 19.5);
-
-      const category =
-        categories[Math.floor(Math.random() * categories.length)];
-      const city = cities[Math.floor(Math.random() * cities.length)];
-      const nameBase =
-        salonNames[Math.floor(Math.random() * salonNames.length)];
-      const id = `mock-${i + 1}`;
-
-      salons.push({
-        id,
-        slug: `salon-${id}`,
-        name: `${nameBase} ${i + 1}`,
-        category,
-        rating: Number((3.5 + Math.random() * 1.5).toFixed(1)),
-        reviews: Math.floor(Math.random() * 500) + 10,
-        location: `${city}, ul. Losowa ${Math.floor(Math.random() * 100)}`,
-        imageUrl: `https://picsum.photos/seed/${id}/400/300`,
-        coordinates: {
-          lat,
-          lng,
+    const salons = await this.prisma.salon.findMany({
+      where,
+      take: 10,
+      include: {
+        locations: {
+          take: 1,
+          select: {
+            id: true,
+            name: true,
+            streetAddress: true,
+            postalCode: true,
+            city: true,
+            country: true,
+            latitude: true,
+            longitude: true,
+          },
         },
-      });
-    }
+        reviews: {
+          select: { rating: true },
+        },
+        _count: { select: { reviews: true } },
+      },
+      orderBy: [{ reviews: { _count: 'desc' } }],
+    });
 
-    return salons;
+    return salons.map((salon) => {
+      const loc = salon.locations[0] ?? null;
+      return {
+        id: salon.id,
+        slug: salon.slug,
+        currency: salon.currency,
+        primaryLocation: loc
+          ? {
+              ...loc,
+              latitude: loc.latitude ? Number(loc.latitude) : null,
+              longitude: loc.longitude ? Number(loc.longitude) : null,
+            }
+          : null,
+        reviewStats: {
+          averageRating: this.calculateAverageRating(
+            salon.reviews.map((r) => r.rating),
+          ),
+          reviewCount: salon._count.reviews,
+        },
+      };
+    });
+  }
+
+  async getMapSalons(location?: string): Promise<MapSalonResponse[]> {
+    const where = location
+      ? {
+          locations: {
+            some: {
+              city: { equals: location, mode: 'insensitive' as const },
+            },
+          },
+        }
+      : {
+          locations: {
+            some: {
+              latitude: { not: null },
+              longitude: { not: null },
+            },
+          },
+        };
+
+    const salons = await this.prisma.salon.findMany({
+      where,
+      take: 100,
+      include: {
+        locations: {
+          where: {
+            latitude: { not: null },
+            longitude: { not: null },
+          },
+          take: 1,
+          select: {
+            name: true,
+            city: true,
+            streetAddress: true,
+            latitude: true,
+            longitude: true,
+          },
+        },
+        treatments: {
+          take: 1,
+          select: { category: true },
+        },
+        reviews: {
+          select: { rating: true },
+        },
+        _count: { select: { reviews: true } },
+      },
+    });
+
+    return salons
+      .filter((s) => s.locations.length > 0)
+      .map((salon) => {
+        const loc = salon.locations[0];
+        return {
+          id: salon.id,
+          slug: salon.slug,
+          name: loc.name,
+          category: salon.treatments[0]?.category ?? null,
+          rating: this.calculateAverageRating(
+            salon.reviews.map((r) => r.rating),
+          ),
+          reviewCount: salon._count.reviews,
+          location: `${loc.city}, ${loc.streetAddress}`,
+          imageUrl: null,
+          coordinates: {
+            lat: Number(loc.latitude),
+            lng: Number(loc.longitude),
+          },
+        };
+      });
+  }
+
+  private calculateAverageRating(ratings: number[]): number {
+    if (ratings.length === 0) return 0;
+    const sum = ratings.reduce((acc, r) => acc + r, 0);
+    return Math.round((sum / ratings.length) * 10) / 10;
   }
 }

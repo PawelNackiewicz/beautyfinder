@@ -6,5 +6,6 @@ import { SalonService } from './salon.service';
 @Module({
   controllers: [SalonController],
   providers: [SalonService],
+  exports: [SalonService],
 })
 export class SalonModule {}

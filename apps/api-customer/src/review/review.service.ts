@@ -1,81 +1,73 @@
 import { Injectable } from '@nestjs/common';
-
-export interface Review {
-  text: string;
-  rating: number; // 1-5
-}
-
-export interface SalonReviewStats {
-  averageRating: number;
-  reviews: Review[];
-}
+import { PrismaService } from '../prisma/prisma.service';
+import type {
+  BatchReviewStatsResponse,
+  SalonReviewStatsResponse,
+} from './interfaces/review.interface';
 
 @Injectable()
 export class ReviewService {
-  private mockReviews: Record<string, Review[]> = {
-    // Mock data for some random salon IDs - we can reuse IDs if we knew them,
-    // but for now we will generate data dynamically or have some static ones.
-    'salon-1': [
-      { text: 'Great service!', rating: 5 },
-      { text: 'Not bad, but expensive.', rating: 3 },
-    ],
-    'salon-2': [
-      { text: 'Amazing experience.', rating: 5 },
-      { text: 'I love this place!', rating: 5 },
-      { text: 'Will come again.', rating: 4 },
-    ],
-    'salon-3': [{ text: 'Avoid at all costs.', rating: 1 }],
-  };
+  constructor(private readonly prisma: PrismaService) {}
 
-  private readonly DEFAULT_REVIEWS: Review[] = [
-    { text: 'Very professional staff.', rating: 5 },
-    { text: 'Clean and tidy.', rating: 4 },
-    { text: 'Average experience.', rating: 3 },
-    { text: 'Highly requested salon.', rating: 5 },
-  ];
+  async getReviewsForSalons(
+    salonIds: string[],
+  ): Promise<BatchReviewStatsResponse> {
+    const reviews = await this.prisma.review.findMany({
+      where: { salonId: { in: salonIds } },
+      select: {
+        id: true,
+        appointmentId: true,
+        salonId: true,
+        rating: true,
+        comment: true,
+        photos: true,
+        staffReply: true,
+        createdAt: true,
+        staff: {
+          select: { displayName: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
 
-  getReviewsForSalons(salonIds: string[]): Record<string, SalonReviewStats> {
-    const results: Record<string, SalonReviewStats> = {};
+    // Group reviews by salonId
+    const grouped = new Map<string, typeof reviews>();
+    for (const review of reviews) {
+      const existing = grouped.get(review.salonId) ?? [];
+      existing.push(review);
+      grouped.set(review.salonId, existing);
+    }
 
+    // Build response for each requested salonId
+    const result: BatchReviewStatsResponse = {};
     for (const salonId of salonIds) {
-      // Try to find specific mock data, otherwise generate/pick random from default
-      let reviews = this.mockReviews[salonId];
-
-      if (!reviews) {
-        // Create deterministic pseudo-random reviews based on salonId string to look consistent
-        reviews = this.generateMockReviews(salonId);
-      }
-
-      const averageRating = this.calculateAverage(reviews);
-
-      results[salonId] = {
-        averageRating,
-        reviews,
+      const salonReviews = grouped.get(salonId) ?? [];
+      const stats: SalonReviewStatsResponse = {
+        salonId,
+        averageRating: this.calculateAverageRating(
+          salonReviews.map((r) => r.rating),
+        ),
+        reviewCount: salonReviews.length,
+        reviews: salonReviews.map((r) => ({
+          id: r.id,
+          appointmentId: r.appointmentId,
+          rating: r.rating,
+          comment: r.comment,
+          photos: r.photos,
+          staffReply: r.staffReply,
+          createdAt: r.createdAt,
+          staff: r.staff,
+        })),
       };
+      result[salonId] = stats;
     }
 
-    return results;
+    return result;
   }
 
-  private generateMockReviews(seed: string): Review[] {
-    // Simple deterministic behavior based on char codes
-    const count = (seed.charCodeAt(0) % 3) + 1; // 1 to 3 reviews
-    const generated: Review[] = [];
-
-    for (let i = 0; i < count; i++) {
-      const index =
-        (seed.charCodeAt(i % seed.length) + i) % this.DEFAULT_REVIEWS.length;
-      generated.push(this.DEFAULT_REVIEWS[index]);
-    }
-
-    // Add a bit of randomness to rating to make it look real if needed,
-    // but reusing objects is fine for a mock.
-    return generated;
-  }
-
-  private calculateAverage(reviews: Review[]): number {
-    if (reviews.length === 0) return 0;
-    const sum = reviews.reduce((acc, r) => acc + r.rating, 0);
-    return Math.round((sum / reviews.length) * 10) / 10; // Round to 1 decimal
+  private calculateAverageRating(ratings: number[]): number {
+    if (ratings.length === 0) return 0;
+    const sum = ratings.reduce((acc, r) => acc + r, 0);
+    return Math.round((sum / ratings.length) * 10) / 10;
   }
 }

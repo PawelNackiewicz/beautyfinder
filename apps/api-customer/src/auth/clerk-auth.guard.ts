@@ -2,6 +2,7 @@ import {
   Injectable,
   CanActivate,
   ExecutionContext,
+  Logger,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -22,10 +23,12 @@ declare global {
 
 @Injectable()
 export class ClerkAuthGuard implements CanActivate {
+  private readonly logger = new Logger(ClerkAuthGuard.name);
+
   constructor(
-    private configService: ConfigService,
-    private userSyncService: UserSyncService,
-  ) { }
+    private readonly configService: ConfigService,
+    private readonly userSyncService: UserSyncService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -62,7 +65,10 @@ export class ClerkAuthGuard implements CanActivate {
 
       return true;
     } catch (error) {
-      console.error('Token verification failed:', error);
+      this.logger.error(
+        'Token verification failed',
+        error instanceof Error ? error.stack : String(error),
+      );
       throw new UnauthorizedException('Invalid or expired token');
     }
   }

@@ -1,15 +1,32 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SalonService } from './salon.service';
+import { PrismaService } from '../prisma/prisma.service';
+import { PaginationQueryDto } from '../common';
+
+// Mock PrismaService
+const mockPrismaService = {
+  salon: {
+    findMany: jest.fn(),
+    count: jest.fn(),
+  },
+};
 
 describe('SalonService', () => {
   let service: SalonService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [SalonService],
+      providers: [
+        SalonService,
+        {
+          provide: PrismaService,
+          useValue: mockPrismaService,
+        },
+      ],
     }).compile();
 
     service = module.get<SalonService>(SalonService);
+    jest.clearAllMocks();
   });
 
   it('should be defined', () => {
@@ -17,182 +34,136 @@ describe('SalonService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all salons', () => {
-      const salons = service.findAll();
+    it('should return paginated salons', async () => {
+      const mockSalons = [
+        {
+          id: 'uuid-1',
+          slug: 'studio-urody',
+          currency: 'PLN',
+          locations: [
+            {
+              id: 'loc-1',
+              name: 'Studio Urody',
+              streetAddress: 'ul. Marszałkowska 10',
+              postalCode: '00-001',
+              city: 'Warszawa',
+              country: 'Poland',
+              latitude: 52.229676,
+              longitude: 21.012229,
+            },
+          ],
+          reviews: [{ rating: 5 }, { rating: 4 }],
+          _count: { reviews: 2 },
+        },
+      ];
 
-      expect(salons).toBeDefined();
-      expect(Array.isArray(salons)).toBe(true);
-      expect(salons.length).toBeGreaterThan(0);
+      mockPrismaService.salon.findMany.mockResolvedValue(mockSalons);
+      mockPrismaService.salon.count.mockResolvedValue(1);
+
+      const pagination = new PaginationQueryDto();
+      const result = await service.findAll(pagination);
+
+      expect(result).toHaveProperty('data');
+      expect(result).toHaveProperty('meta');
+      expect(result.meta.total).toBe(1);
+      expect(result.data).toHaveLength(1);
+      expect(result.data[0]).toHaveProperty('id', 'uuid-1');
+      expect(result.data[0]).toHaveProperty('slug', 'studio-urody');
+      expect(result.data[0]).toHaveProperty('reviewStats');
+      expect(result.data[0].reviewStats.averageRating).toBe(4.5);
+      expect(result.data[0].reviewStats.reviewCount).toBe(2);
     });
 
-    it('should return salons with all required properties', () => {
-      const salons = service.findAll();
-      const salon = salons[0];
+    it('should return empty data when no salons exist', async () => {
+      mockPrismaService.salon.findMany.mockResolvedValue([]);
+      mockPrismaService.salon.count.mockResolvedValue(0);
 
-      expect(salon).toHaveProperty('id');
-      expect(salon).toHaveProperty('name');
-      expect(salon).toHaveProperty('address');
-      expect(salon).toHaveProperty('city');
-      expect(salon).toHaveProperty('postalCode');
-      expect(salon).toHaveProperty('phone');
-      expect(salon).toHaveProperty('premiumUntil');
-      expect(salon).toHaveProperty('rating');
-      expect(salon).toHaveProperty('reviewCount');
+      const pagination = new PaginationQueryDto();
+      const result = await service.findAll(pagination);
+
+      expect(result.data).toHaveLength(0);
+      expect(result.meta.total).toBe(0);
+      expect(result.meta.totalPages).toBe(0);
+    });
+
+    it('should calculate correct pagination metadata', async () => {
+      mockPrismaService.salon.findMany.mockResolvedValue([]);
+      mockPrismaService.salon.count.mockResolvedValue(45);
+
+      const pagination = new PaginationQueryDto();
+      pagination.page = 2;
+      pagination.limit = 10;
+      const result = await service.findAll(pagination);
+
+      expect(result.meta.page).toBe(2);
+      expect(result.meta.limit).toBe(10);
+      expect(result.meta.totalPages).toBe(5);
+    });
+
+    it('should handle salons without locations', async () => {
+      const mockSalons = [
+        {
+          id: 'uuid-2',
+          slug: 'no-location',
+          currency: 'PLN',
+          locations: [],
+          reviews: [],
+          _count: { reviews: 0 },
+        },
+      ];
+
+      mockPrismaService.salon.findMany.mockResolvedValue(mockSalons);
+      mockPrismaService.salon.count.mockResolvedValue(1);
+
+      const pagination = new PaginationQueryDto();
+      const result = await service.findAll(pagination);
+
+      expect(result.data[0].primaryLocation).toBeNull();
+      expect(result.data[0].reviewStats.averageRating).toBe(0);
     });
   });
 
   describe('getPremiumSalons', () => {
-    describe('without location filter', () => {
-      it('should return only premium salons with active subscription', () => {
-        const premiumSalons = service.getPremiumSalons();
+    it('should return maximum 10 salons', async () => {
+      mockPrismaService.salon.findMany.mockResolvedValue([]);
 
-        expect(premiumSalons).toBeDefined();
-        expect(Array.isArray(premiumSalons)).toBe(true);
+      const result = await service.getPremiumSalons();
 
-        const now = new Date();
-        premiumSalons.forEach((salon) => {
-          expect(salon.premiumUntil).not.toBeNull();
-          expect(salon.premiumUntil!.getTime()).toBeGreaterThan(now.getTime());
-        });
-      });
-
-      it('should return maximum 10 salons', () => {
-        const premiumSalons = service.getPremiumSalons();
-
-        expect(premiumSalons.length).toBeLessThanOrEqual(10);
-      });
-
-      it('should sort salons by reviewCount (descending) and then by rating (descending)', () => {
-        const premiumSalons = service.getPremiumSalons();
-
-        for (let i = 0; i < premiumSalons.length - 1; i++) {
-          const current = premiumSalons[i];
-          const next = premiumSalons[i + 1];
-
-          // If review counts are different, current should have more reviews
-          if (current.reviewCount !== next.reviewCount) {
-            expect(current.reviewCount).toBeGreaterThan(next.reviewCount);
-          } else {
-            // If review counts are the same, current should have higher or equal rating
-            expect(current.rating).toBeGreaterThanOrEqual(next.rating);
-          }
-        }
-      });
-
-      it('should not include salons with null premiumUntil', () => {
-        const premiumSalons = service.getPremiumSalons();
-
-        premiumSalons.forEach((salon) => {
-          expect(salon.premiumUntil).not.toBeNull();
-        });
-      });
-
-      it('should not include salons with expired premium status', () => {
-        const premiumSalons = service.getPremiumSalons();
-        const now = new Date();
-
-        premiumSalons.forEach((salon) => {
-          expect(salon.premiumUntil!.getTime()).toBeGreaterThan(now.getTime());
-        });
-      });
+      expect(result).toBeDefined();
+      expect(Array.isArray(result)).toBe(true);
+      expect(mockPrismaService.salon.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({ take: 10 }),
+      );
     });
 
-    describe('with location filter', () => {
-      it('should return only premium salons from specified city', () => {
-        const location = 'Warszawa';
-        const premiumSalons = service.getPremiumSalons(location);
+    it('should filter by location when provided', async () => {
+      mockPrismaService.salon.findMany.mockResolvedValue([]);
 
-        expect(premiumSalons).toBeDefined();
-        expect(Array.isArray(premiumSalons)).toBe(true);
+      await service.getPremiumSalons('Warszawa');
 
-        premiumSalons.forEach((salon) => {
-          expect(salon.city).toBe(location);
-        });
-      });
-
-      it('should be case-insensitive when filtering by location', () => {
-        const premiumSalonsLower = service.getPremiumSalons('warszawa');
-        const premiumSalonsUpper = service.getPremiumSalons('WARSZAWA');
-        const premiumSalonsMixed = service.getPremiumSalons('Warszawa');
-
-        expect(premiumSalonsLower.length).toBe(premiumSalonsUpper.length);
-        expect(premiumSalonsLower.length).toBe(premiumSalonsMixed.length);
-      });
-
-      it('should return empty array if no premium salons in specified location', () => {
-        const premiumSalons = service.getPremiumSalons('NonExistentCity');
-
-        expect(premiumSalons).toBeDefined();
-        expect(Array.isArray(premiumSalons)).toBe(true);
-        expect(premiumSalons.length).toBe(0);
-      });
-
-      it('should return maximum 10 salons even with location filter', () => {
-        const premiumSalons = service.getPremiumSalons('Warszawa');
-
-        expect(premiumSalons.length).toBeLessThanOrEqual(10);
-      });
-
-      it('should sort filtered salons by reviewCount and rating', () => {
-        const premiumSalons = service.getPremiumSalons('Kraków');
-
-        for (let i = 0; i < premiumSalons.length - 1; i++) {
-          const current = premiumSalons[i];
-          const next = premiumSalons[i + 1];
-
-          if (current.reviewCount !== next.reviewCount) {
-            expect(current.reviewCount).toBeGreaterThan(next.reviewCount);
-          } else {
-            expect(current.rating).toBeGreaterThanOrEqual(next.rating);
-          }
-        }
-      });
-
-      it('should only return active premium salons from specified location', () => {
-        const location = 'Poznań';
-        const premiumSalons = service.getPremiumSalons(location);
-        const now = new Date();
-
-        premiumSalons.forEach((salon) => {
-          expect(salon.city).toBe(location);
-          expect(salon.premiumUntil).not.toBeNull();
-          expect(salon.premiumUntil!.getTime()).toBeGreaterThan(now.getTime());
-        });
-      });
+      expect(mockPrismaService.salon.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            locations: {
+              some: {
+                city: { equals: 'Warszawa', mode: 'insensitive' },
+              },
+            },
+          },
+        }),
+      );
     });
 
-    describe('edge cases', () => {
-      it('should handle empty string location', () => {
-        const premiumSalons = service.getPremiumSalons('');
+    it('should not filter by location when not provided', async () => {
+      mockPrismaService.salon.findMany.mockResolvedValue([]);
 
-        expect(premiumSalons).toBeDefined();
-        expect(Array.isArray(premiumSalons)).toBe(true);
-      });
+      await service.getPremiumSalons();
 
-      it('should handle undefined location parameter', () => {
-        const premiumSalons = service.getPremiumSalons(undefined);
-
-        expect(premiumSalons).toBeDefined();
-        expect(Array.isArray(premiumSalons)).toBe(true);
-        expect(premiumSalons.length).toBeGreaterThan(0);
-      });
-
-      it('should return salons with valid rating range (0-5)', () => {
-        const premiumSalons = service.getPremiumSalons();
-
-        premiumSalons.forEach((salon) => {
-          expect(salon.rating).toBeGreaterThanOrEqual(0);
-          expect(salon.rating).toBeLessThanOrEqual(5);
-        });
-      });
-
-      it('should return salons with non-negative review count', () => {
-        const premiumSalons = service.getPremiumSalons();
-
-        premiumSalons.forEach((salon) => {
-          expect(salon.reviewCount).toBeGreaterThanOrEqual(0);
-        });
-      });
+      expect(mockPrismaService.salon.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {},
+        }),
+      );
     });
   });
 });
