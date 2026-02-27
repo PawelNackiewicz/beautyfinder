@@ -1,0 +1,58 @@
+# Dependencies
+node_modules
+**/node_modules
+
+# Build outputs
+dist
+**/dist
+.next
+**/.next
+
+# Git
+.git
+.gitignore
+
+# Docker (prevent recursive context)
+**/Dockerfile
+**/docker-compose*.yml
+**/.dockerignore
+
+# IDE
+.vscode
+.idea
+**/.vscode
+**/.idea
+
+# Test files
+**/test
+**/*.spec.ts
+**/*.e2e-spec.ts
+**/coverage
+**/.jest
+
+# Development files
+**/.env
+**/.env.local
+**/.env.*.local
+.turbo
+**/.turbo
+
+# Documentation & misc
+*.md
+!README.md
+LICENSE
+docs/
+
+# OS files
+.DS_Store
+**/.DS_Store
+Thumbs.db
+
+# Storybook (not needed for API)
+apps/docs
+apps/web-customer-site
+apps/web-manager
+packages/ui
+
+# Database playground
+pg-playground
