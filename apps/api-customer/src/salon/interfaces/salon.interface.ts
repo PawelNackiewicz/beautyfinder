@@ -56,3 +56,24 @@ export interface PremiumSalonResponse {
     reviewCount: number;
   };
 }
+
+export interface SearchSalonTreatment {
+  id: string;
+  name: string;
+  category: string | null;
+  minPriceCents: number | null;
+}
+
+export interface SearchSalonResponse {
+  id: string;
+  slug: string;
+  name: string;
+  currency: string;
+  primaryLocation: SalonLocationResponse | null;
+  reviewStats: {
+    averageRating: number;
+    reviewCount: number;
+  };
+  treatments: SearchSalonTreatment[];
+  imageUrl: string | null;
+}

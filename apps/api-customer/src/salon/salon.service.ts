@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import {
   PaginationQueryDto,
@@ -8,11 +9,13 @@ import {
 import type {
   SalonListItemResponse,
   MapSalonResponse,
+  SearchSalonResponse,
 } from './interfaces/salon.interface';
+import type { SearchSalonsQueryDto } from './dto/search-salons-query.dto';
 
 @Injectable()
 export class SalonService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findAll(
     pagination: PaginationQueryDto,
@@ -52,10 +55,10 @@ export class SalonService {
         currency: salon.currency,
         primaryLocation: loc
           ? {
-              ...loc,
-              latitude: loc.latitude ? Number(loc.latitude) : null,
-              longitude: loc.longitude ? Number(loc.longitude) : null,
-            }
+            ...loc,
+            latitude: loc.latitude ? Number(loc.latitude) : null,
+            longitude: loc.longitude ? Number(loc.longitude) : null,
+          }
           : null,
         reviewStats: {
           averageRating: this.calculateAverageRating(
@@ -79,12 +82,12 @@ export class SalonService {
     // For now, we return top-rated salons, optionally filtered by location
     const where = location
       ? {
-          locations: {
-            some: {
-              city: { equals: location, mode: 'insensitive' as const },
-            },
+        locations: {
+          some: {
+            city: { equals: location, mode: 'insensitive' as const },
           },
-        }
+        },
+      }
       : {};
 
     const salons = await this.prisma.salon.findMany({
@@ -120,10 +123,10 @@ export class SalonService {
         currency: salon.currency,
         primaryLocation: loc
           ? {
-              ...loc,
-              latitude: loc.latitude ? Number(loc.latitude) : null,
-              longitude: loc.longitude ? Number(loc.longitude) : null,
-            }
+            ...loc,
+            latitude: loc.latitude ? Number(loc.latitude) : null,
+            longitude: loc.longitude ? Number(loc.longitude) : null,
+          }
           : null,
         reviewStats: {
           averageRating: this.calculateAverageRating(
@@ -138,20 +141,20 @@ export class SalonService {
   async getMapSalons(location?: string): Promise<MapSalonResponse[]> {
     const where = location
       ? {
-          locations: {
-            some: {
-              city: { equals: location, mode: 'insensitive' as const },
-            },
+        locations: {
+          some: {
+            city: { equals: location, mode: 'insensitive' as const },
           },
-        }
+        },
+      }
       : {
-          locations: {
-            some: {
-              latitude: { not: null },
-              longitude: { not: null },
-            },
+        locations: {
+          some: {
+            latitude: { not: null },
+            longitude: { not: null },
           },
-        };
+        },
+      };
 
     const salons = await this.prisma.salon.findMany({
       where,
@@ -203,6 +206,136 @@ export class SalonService {
           },
         };
       });
+  }
+
+  async search(
+    query: SearchSalonsQueryDto,
+  ): Promise<PaginatedResponse<SearchSalonResponse>> {
+    const where: Prisma.SalonWhereInput = {};
+    const conditions: Prisma.SalonWhereInput[] = [];
+
+    // Filter by city
+    if (query.city) {
+      conditions.push({
+        locations: {
+          some: {
+            city: { equals: query.city, mode: 'insensitive' },
+          },
+        },
+      });
+    }
+
+    // Search by query string (treatment name, treatment category, or salon location name)
+    if (query.q) {
+      conditions.push({
+        OR: [
+          {
+            treatments: {
+              some: {
+                name: { contains: query.q, mode: 'insensitive' },
+              },
+            },
+          },
+          {
+            treatments: {
+              some: {
+                category: { contains: query.q, mode: 'insensitive' },
+              },
+            },
+          },
+          {
+            locations: {
+              some: {
+                name: { contains: query.q, mode: 'insensitive' },
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    if (conditions.length > 0) {
+      where.AND = conditions;
+    }
+
+    const [salons, total] = await Promise.all([
+      this.prisma.salon.findMany({
+        where,
+        skip: query.skip,
+        take: query.limit,
+        include: {
+          locations: {
+            take: 1,
+            select: {
+              id: true,
+              name: true,
+              streetAddress: true,
+              postalCode: true,
+              city: true,
+              country: true,
+              latitude: true,
+              longitude: true,
+            },
+          },
+          treatments: {
+            take: 5,
+            select: {
+              id: true,
+              name: true,
+              category: true,
+              variants: {
+                select: { priceCents: true },
+                orderBy: { priceCents: 'asc' },
+                take: 1,
+              },
+            },
+          },
+          reviews: {
+            select: { rating: true },
+          },
+          _count: { select: { reviews: true } },
+        },
+        orderBy: [{ reviews: { _count: 'desc' } }],
+      }),
+      this.prisma.salon.count({ where }),
+    ]);
+
+    const mapped: SearchSalonResponse[] = salons.map((salon) => {
+      const loc = salon.locations[0] ?? null;
+      return {
+        id: salon.id,
+        slug: salon.slug,
+        name: loc?.name ?? salon.slug,
+        currency: salon.currency,
+        primaryLocation: loc
+          ? {
+            ...loc,
+            latitude: loc.latitude ? Number(loc.latitude) : null,
+            longitude: loc.longitude ? Number(loc.longitude) : null,
+          }
+          : null,
+        reviewStats: {
+          averageRating: this.calculateAverageRating(
+            salon.reviews.map((r) => r.rating),
+          ),
+          reviewCount: salon._count.reviews,
+        },
+        treatments: salon.treatments.map((t) => ({
+          id: t.id,
+          name: t.name,
+          category: t.category,
+          minPriceCents: t.variants[0]?.priceCents ?? null,
+        })),
+        imageUrl: null,
+      };
+    });
+
+    return createPaginatedResponse(
+      mapped,
+      total,
+      query.page,
+      query.limit,
+    );
   }
 
   private calculateAverageRating(ratings: number[]): number {

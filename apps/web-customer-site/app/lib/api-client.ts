@@ -14,6 +14,54 @@ interface ApiSalon {
   reviewCount: number;
 }
 
+export interface SearchSalonTreatment {
+  id: string;
+  name: string;
+  category: string | null;
+  minPriceCents: number | null;
+}
+
+export interface SearchSalonResult {
+  id: string;
+  slug: string;
+  name: string;
+  currency: string;
+  primaryLocation: {
+    id: string;
+    name: string;
+    streetAddress: string;
+    postalCode: string;
+    city: string;
+    country: string;
+    latitude: number | null;
+    longitude: number | null;
+  } | null;
+  reviewStats: {
+    averageRating: number;
+    reviewCount: number;
+  };
+  treatments: SearchSalonTreatment[];
+  imageUrl: string | null;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+    totalPages: number;
+  };
+}
+
+export interface SearchParams {
+  q?: string;
+  city?: string;
+  date?: string;
+  page?: number;
+  limit?: number;
+}
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 export async function fetchPremiumSalons(location?: string): Promise<Salon[]> {
@@ -52,6 +100,37 @@ export async function fetchPremiumSalons(location?: string): Promise<Salon[]> {
     console.error('Error fetching premium salons:', error);
     // Return empty array on error to prevent page crash
     return [];
+  }
+}
+
+export async function searchSalons(
+  params: SearchParams,
+): Promise<PaginatedResponse<SearchSalonResult>> {
+  const emptyResponse: PaginatedResponse<SearchSalonResult> = {
+    data: [],
+    meta: { total: 0, page: 1, limit: 20, totalPages: 0 },
+  };
+
+  try {
+    const url = new URL(`${API_URL}/salons/search`);
+    if (params.q) url.searchParams.append('q', params.q);
+    if (params.city) url.searchParams.append('city', params.city);
+    if (params.date) url.searchParams.append('date', params.date);
+    if (params.page) url.searchParams.append('page', String(params.page));
+    if (params.limit) url.searchParams.append('limit', String(params.limit));
+
+    const response = await fetch(url.toString(), {
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      throw new Error(`Search API request failed: ${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error searching salons:', error);
+    return emptyResponse;
   }
 }
 
