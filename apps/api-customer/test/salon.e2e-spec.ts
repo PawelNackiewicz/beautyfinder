@@ -5,6 +5,7 @@ import {
   createTestApp,
   MockPrismaService,
   createTestSalonWithRelations,
+  createTestTreatment,
   TEST_SALON_ID,
 } from './helpers';
 
@@ -178,6 +179,131 @@ describe('SalonController (e2e)', () => {
           }),
         }),
       );
+    });
+  });
+
+  describe('GET /salons/search', () => {
+    const createSearchSalonData = (overrides = {}) => ({
+      ...createTestSalonWithRelations(),
+      treatments: [
+        {
+          id: 'treat-1',
+          name: 'Masaż relaksacyjny',
+          category: 'Masaż',
+          variants: [{ priceCents: 15000 }],
+        },
+      ],
+      ...overrides,
+    });
+
+    it('should return paginated search results with correct structure', async () => {
+      const salonData = createSearchSalonData();
+      prisma.salon.findMany.mockResolvedValue([salonData]);
+      prisma.salon.count.mockResolvedValue(1);
+
+      const response = await request(app.getHttpServer())
+        .get('/salons/search?q=masaż')
+        .expect(200);
+
+      expect(response.body).toHaveProperty('data');
+      expect(response.body).toHaveProperty('meta');
+      expect(response.body.meta).toHaveProperty('total', 1);
+      expect(response.body.data).toHaveLength(1);
+      expect(response.body.data[0]).toHaveProperty('id', TEST_SALON_ID);
+      expect(response.body.data[0]).toHaveProperty('slug');
+      expect(response.body.data[0]).toHaveProperty('name');
+      expect(response.body.data[0]).toHaveProperty('reviewStats');
+      expect(response.body.data[0]).toHaveProperty('treatments');
+      expect(response.body.data[0]).toHaveProperty('imageUrl');
+    });
+
+    it('should filter by city query param', async () => {
+      prisma.salon.findMany.mockResolvedValue([]);
+      prisma.salon.count.mockResolvedValue(0);
+
+      await request(app.getHttpServer())
+        .get('/salons/search?city=Warszawa')
+        .expect(200);
+
+      expect(prisma.salon.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {
+            AND: [
+              {
+                locations: {
+                  some: {
+                    city: { equals: 'Warszawa', mode: 'insensitive' },
+                  },
+                },
+              },
+            ],
+          },
+        }),
+      );
+    });
+
+    it('should combine q and city params', async () => {
+      prisma.salon.findMany.mockResolvedValue([]);
+      prisma.salon.count.mockResolvedValue(0);
+
+      await request(app.getHttpServer())
+        .get('/salons/search?q=masaż&city=Kraków')
+        .expect(200);
+
+      const calledWith = prisma.salon.findMany.mock.calls[0][0];
+      expect(calledWith.where.AND).toHaveLength(2);
+    });
+
+    it('should return 400 when limit exceeds 100', async () => {
+      await request(app.getHttpServer())
+        .get('/salons/search?limit=999')
+        .expect(400);
+    });
+
+    it('should return empty results when no salons match', async () => {
+      prisma.salon.findMany.mockResolvedValue([]);
+      prisma.salon.count.mockResolvedValue(0);
+
+      const response = await request(app.getHttpServer())
+        .get('/salons/search?q=xyz-not-existing')
+        .expect(200);
+
+      expect(response.body.data).toHaveLength(0);
+      expect(response.body.meta.total).toBe(0);
+    });
+
+    it('should return all salons when no search params provided', async () => {
+      const salonData = createSearchSalonData();
+      prisma.salon.findMany.mockResolvedValue([salonData]);
+      prisma.salon.count.mockResolvedValue(1);
+
+      const response = await request(app.getHttpServer())
+        .get('/salons/search')
+        .expect(200);
+
+      expect(response.body.data).toHaveLength(1);
+      expect(prisma.salon.findMany).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: {},
+        }),
+      );
+    });
+
+    it('should include treatment data with minPriceCents in response', async () => {
+      const salonData = createSearchSalonData();
+      prisma.salon.findMany.mockResolvedValue([salonData]);
+      prisma.salon.count.mockResolvedValue(1);
+
+      const response = await request(app.getHttpServer())
+        .get('/salons/search')
+        .expect(200);
+
+      const salon = response.body.data[0];
+      expect(salon.treatments).toHaveLength(1);
+      expect(salon.treatments[0]).toHaveProperty('id');
+      expect(salon.treatments[0]).toHaveProperty('name', 'Masaż relaksacyjny');
+      expect(salon.treatments[0]).toHaveProperty('category', 'Masaż');
+      expect(salon.treatments[0]).toHaveProperty('minPriceCents', 15000);
     });
   });
 });

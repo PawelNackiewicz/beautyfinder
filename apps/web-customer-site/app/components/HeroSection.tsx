@@ -2,13 +2,20 @@
 import { Search, MapPin } from "lucide-react";
 import { Button, Input, Typography } from "@repo/ui/components";
 import { FormEvent, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export const HeroSection = () => {
   const [service, setService] = useState("");
   const [city, setCity] = useState("");
+  const router = useRouter();
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
+    const params = new URLSearchParams();
+    if (service.trim()) params.set("q", service.trim());
+    if (city.trim()) params.set("city", city.trim());
+    router.push(`/szukaj?${params.toString()}`);
   };
 
   return (
@@ -77,22 +84,25 @@ export const HeroSection = () => {
             <Button
               variant="link"
               className="text-white/80 hover:text-white px-1 h-auto font-normal underline decoration-1 underline-offset-4"
+              asChild
             >
-              Manicure
+              <Link href="/szukaj?q=Manicure">Manicure</Link>
             </Button>
             ,
             <Button
               variant="link"
               className="text-white/80 hover:text-white px-1 h-auto font-normal underline decoration-1 underline-offset-4"
+              asChild
             >
-              Botoks
+              <Link href="/szukaj?q=Botoks">Botoks</Link>
             </Button>
             ,
             <Button
               variant="link"
               className="text-white/80 hover:text-white px-1 h-auto font-normal underline decoration-1 underline-offset-4"
+              asChild
             >
-              Strzyżenie męskie
+              <Link href="/szukaj?q=Strzy%C5%BCenie%20m%C4%99skie">Strzyżenie męskie</Link>
             </Button>
           </Typography>
         </div>
