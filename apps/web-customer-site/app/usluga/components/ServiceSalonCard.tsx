@@ -4,13 +4,13 @@ import { Star } from "lucide-react";
 import { Badge, Button } from "@repo/ui/components";
 import type { ServiceSalon } from "../mockData";
 
-interface ServiceSalonCardProps {
+type ServiceSalonCardProps = {
   salon: ServiceSalon;
-}
+};
 
 export function ServiceSalonCard({ salon }: ServiceSalonCardProps) {
   return (
-    <div className="flex gap-4 py-4 border-b border-gray-200 last:border-b-0">
+    <div className="flex gap-4 py-4">
       {/* Image */}
       <div className="relative w-24 h-24 rounded-lg overflow-hidden shrink-0">
         <Image
@@ -18,6 +18,7 @@ export function ServiceSalonCard({ salon }: ServiceSalonCardProps) {
           alt={salon.name}
           fill
           className="object-cover"
+          sizes="96px"
         />
       </div>
 
@@ -26,13 +27,13 @@ export function ServiceSalonCard({ salon }: ServiceSalonCardProps) {
         <div>
           {/* Name + Premium */}
           <div className="flex items-center gap-2">
-            <h3 className="font-semibold text-gray-900 text-sm truncate">
+            <h3 className="font-semibold text-gray-900 text-sm truncate italic">
               {salon.name}
             </h3>
             {salon.isPremium && (
               <Badge
                 variant="outline"
-                className="text-[10px] px-1.5 py-0 border-amber-600 text-amber-700 uppercase font-semibold tracking-wide"
+                className="text-[10px] px-1.5 py-0 border-amber-500 text-amber-600 bg-amber-50 uppercase font-semibold tracking-wide"
               >
                 Premium
               </Badge>
@@ -46,7 +47,7 @@ export function ServiceSalonCard({ salon }: ServiceSalonCardProps) {
 
           {/* Rating */}
           <div className="flex items-center gap-1 mt-1">
-            <Star className="w-3.5 h-3.5 fill-yellow-500 text-yellow-500" />
+            <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" />
             <span className="text-xs font-semibold text-gray-900">
               {salon.rating}
             </span>
@@ -62,9 +63,9 @@ export function ServiceSalonCard({ salon }: ServiceSalonCardProps) {
             od {salon.priceFrom} {salon.currency}
           </span>
           <Button
-            variant="outline"
+            variant="link"
             size="sm"
-            className="text-xs h-7 px-3 uppercase font-semibold tracking-wide"
+            className="text-xs h-7 px-0 uppercase font-semibold tracking-wide text-emerald-700 hover:text-emerald-800 no-underline hover:no-underline"
             asChild
           >
             <Link href={`/${salon.slug}`}>Rezerwuj</Link>

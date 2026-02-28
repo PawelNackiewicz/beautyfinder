@@ -3,10 +3,10 @@
 import { ChevronDown } from "lucide-react";
 import type { ServiceCategory } from "../mockData";
 
-interface ServiceCategoryTabsProps {
+type ServiceCategoryTabsProps = {
   categories: ServiceCategory[];
   activeId?: string;
-}
+};
 
 export function ServiceCategoryTabs({
   categories,
@@ -21,7 +21,7 @@ export function ServiceCategoryTabs({
             key={category.id}
             className={`flex items-center gap-1.5 whitespace-nowrap rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
               isActive
-                ? "bg-gray-800 text-white border-gray-800"
+                ? "bg-emerald-800 text-white border-emerald-800"
                 : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
             }`}
           >
