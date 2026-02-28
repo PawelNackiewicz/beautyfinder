@@ -15,7 +15,7 @@ import type { SearchSalonsQueryDto } from './dto/search-salons-query.dto';
 
 @Injectable()
 export class SalonService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async findAll(
     pagination: PaginationQueryDto,
@@ -55,10 +55,10 @@ export class SalonService {
         currency: salon.currency,
         primaryLocation: loc
           ? {
-              ...loc,
-              latitude: loc.latitude ? Number(loc.latitude) : null,
-              longitude: loc.longitude ? Number(loc.longitude) : null,
-            }
+            ...loc,
+            latitude: loc.latitude ? Number(loc.latitude) : null,
+            longitude: loc.longitude ? Number(loc.longitude) : null,
+          }
           : null,
         reviewStats: {
           averageRating: this.calculateAverageRating(
@@ -82,12 +82,12 @@ export class SalonService {
     // For now, we return top-rated salons, optionally filtered by location
     const where = location
       ? {
-          locations: {
-            some: {
-              city: { equals: location, mode: 'insensitive' as const },
-            },
+        locations: {
+          some: {
+            city: { equals: location, mode: 'insensitive' as const },
           },
-        }
+        },
+      }
       : {};
 
     const salons = await this.prisma.salon.findMany({
@@ -123,10 +123,10 @@ export class SalonService {
         currency: salon.currency,
         primaryLocation: loc
           ? {
-              ...loc,
-              latitude: loc.latitude ? Number(loc.latitude) : null,
-              longitude: loc.longitude ? Number(loc.longitude) : null,
-            }
+            ...loc,
+            latitude: loc.latitude ? Number(loc.latitude) : null,
+            longitude: loc.longitude ? Number(loc.longitude) : null,
+          }
           : null,
         reviewStats: {
           averageRating: this.calculateAverageRating(
@@ -141,20 +141,20 @@ export class SalonService {
   async getMapSalons(location?: string): Promise<MapSalonResponse[]> {
     const where = location
       ? {
-          locations: {
-            some: {
-              city: { equals: location, mode: 'insensitive' as const },
-            },
+        locations: {
+          some: {
+            city: { equals: location, mode: 'insensitive' as const },
           },
-        }
+        },
+      }
       : {
-          locations: {
-            some: {
-              latitude: { not: null },
-              longitude: { not: null },
-            },
+        locations: {
+          some: {
+            latitude: { not: null },
+            longitude: { not: null },
           },
-        };
+        },
+      };
 
     const salons = await this.prisma.salon.findMany({
       where,
@@ -309,10 +309,10 @@ export class SalonService {
         currency: salon.currency,
         primaryLocation: loc
           ? {
-              ...loc,
-              latitude: loc.latitude ? Number(loc.latitude) : null,
-              longitude: loc.longitude ? Number(loc.longitude) : null,
-            }
+            ...loc,
+            latitude: loc.latitude ? Number(loc.latitude) : null,
+            longitude: loc.longitude ? Number(loc.longitude) : null,
+          }
           : null,
         reviewStats: {
           averageRating: this.calculateAverageRating(

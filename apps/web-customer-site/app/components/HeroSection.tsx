@@ -102,7 +102,9 @@ export const HeroSection = () => {
               className="text-white/80 hover:text-white px-1 h-auto font-normal underline decoration-1 underline-offset-4"
               asChild
             >
-              <Link href="/szukaj?q=Strzy%C5%BCenie%20m%C4%99skie">Strzyżenie męskie</Link>
+              <Link href="/szukaj?q=Strzy%C5%BCenie%20m%C4%99skie">
+                Strzyżenie męskie
+              </Link>
             </Button>
           </Typography>
         </div>

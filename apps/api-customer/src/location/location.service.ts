@@ -4,7 +4,17 @@ import { PaginationQueryDto, createPaginatedResponse } from '../common';
 
 @Injectable()
 export class LocationService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
+
+  async findDistinctCities(): Promise<string[]> {
+    const locations = await this.prisma.location.findMany({
+      select: { city: true },
+      distinct: ['city'],
+      orderBy: { city: 'asc' },
+    });
+
+    return locations.map((l) => l.city);
+  }
 
   async findAll(pagination: PaginationQueryDto) {
     const [locations, total] = await Promise.all([

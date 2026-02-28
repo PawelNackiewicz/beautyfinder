@@ -45,14 +45,11 @@ function toSalonCard(result: SearchSalonResult): Salon {
     category,
     rating: result.reviewStats.averageRating,
     reviews: result.reviewStats.reviewCount,
-    location: loc
-      ? `${loc.streetAddress}, ${loc.city}`
-      : "Brak adresu",
+    location: loc ? `${loc.streetAddress}, ${loc.city}` : "Brak adresu",
     city: loc?.city ?? "",
     citySlug: loc ? generateSlug(loc.city) : "",
     imageUrl:
-      result.imageUrl ??
-      `https://picsum.photos/seed/salon${result.id}/400/300`,
+      result.imageUrl ?? `https://picsum.photos/seed/salon${result.id}/400/300`,
     coordinates:
       loc?.latitude && loc?.longitude
         ? { lat: loc.latitude, lng: loc.longitude }
@@ -132,8 +129,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           <SearchX className="w-16 h-16 text-muted-foreground/50 mb-4" />
           <h2 className="text-2xl font-semibold mb-2">Brak wyników</h2>
           <p className="text-muted-foreground max-w-md">
-            Nie znaleziono salonów pasujących do Twojego wyszukiwania.
-            Spróbuj zmienić kryteria lub sprawdź popularne kategorie.
+            Nie znaleziono salonów pasujących do Twojego wyszukiwania. Spróbuj
+            zmienić kryteria lub sprawdź popularne kategorie.
           </p>
           <Link
             href="/uslugi"

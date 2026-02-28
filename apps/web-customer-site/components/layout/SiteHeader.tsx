@@ -1,30 +1,29 @@
 "use client";
 
-import {
-  MapPin,
-  Search,
-  Calendar as CalendarIcon,
-  LogIn,
-  Gift,
-} from "lucide-react";
+import { Search, Calendar as CalendarIcon, LogIn, Gift } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useRef } from "react";
 import { Button, Separator } from "@repo/ui/components";
 import { SignedIn, SignedOut } from "@clerk/nextjs";
 import { UserProfileButton } from "./UserProfileButton";
+import { CityAutocomplete, CityAutocompleteHandle } from "./CityAutocomplete";
+import {
+  ServiceAutocomplete,
+  ServiceAutocompleteHandle,
+} from "./ServiceAutocomplete";
 
 export const SiteHeader = () => {
   const router = useRouter();
-  const serviceRef = useRef<HTMLInputElement>(null);
-  const cityRef = useRef<HTMLInputElement>(null);
+  const serviceRef = useRef<ServiceAutocompleteHandle>(null);
+  const cityRef = useRef<CityAutocompleteHandle>(null);
   const dateRef = useRef<HTMLInputElement>(null);
 
   const handleSearch = (e: FormEvent) => {
     e.preventDefault();
     const params = new URLSearchParams();
-    const q = serviceRef.current?.value.trim();
-    const city = cityRef.current?.value.trim();
+    const q = serviceRef.current?.getValue()?.trim();
+    const city = cityRef.current?.getValue()?.trim();
     const date = dateRef.current?.value;
     if (q) params.set("q", q);
     if (city) params.set("city", city);
@@ -47,26 +46,9 @@ export const SiteHeader = () => {
           onSubmit={handleSearch}
           className="hidden md:flex items-center max-w-2xl w-full bg-muted/50 rounded-full border border-border/50 p-1 shadow-sm hover:shadow-md transition-shadow"
         >
-          <div className="flex-1 flex items-center px-4 relative group/input">
-            <Search className="w-4 h-4 text-muted-foreground mr-2 group-focus-within/input:text-primary transition-colors" />
-            <input
-              ref={serviceRef}
-              className="bg-transparent border-none outline-none text-sm w-full h-10 placeholder:text-muted-foreground/80"
-              placeholder="Usługa (np. masaż)"
-              suppressHydrationWarning
-            />
-          </div>
+          <ServiceAutocomplete ref={serviceRef} />
           <Separator orientation="vertical" className="h-6" />
-          <div className="flex-1 flex items-center px-4 relative group/input">
-            <MapPin className="w-4 h-4 text-muted-foreground mr-2 group-focus-within/input:text-primary transition-colors" />
-            <input
-              ref={cityRef}
-              className="bg-transparent border-none outline-none text-sm w-full h-10 placeholder:text-muted-foreground/80"
-              placeholder="Miasto"
-              defaultValue="Warszawa"
-              suppressHydrationWarning
-            />
-          </div>
+          <CityAutocomplete ref={cityRef} defaultValue="Warszawa" />
           <Separator orientation="vertical" className="h-6" />
           <div className="flex-1 flex items-center px-4 relative group/input">
             <CalendarIcon className="w-4 h-4 text-muted-foreground mr-2 group-focus-within/input:text-primary transition-colors" />
@@ -77,7 +59,11 @@ export const SiteHeader = () => {
               suppressHydrationWarning
             />
           </div>
-          <Button type="submit" size="icon" className="rounded-full h-10 w-10 shrink-0">
+          <Button
+            type="submit"
+            size="icon"
+            className="rounded-full h-10 w-10 shrink-0"
+          >
             <Search className="w-4 h-4" />
           </Button>
         </form>

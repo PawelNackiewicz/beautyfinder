@@ -4,7 +4,18 @@ import { PaginationQueryDto, createPaginatedResponse } from '../common';
 
 @Injectable()
 export class TreatmentService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
+
+  async findDistinctCategories(): Promise<string[]> {
+    const treatments = await this.prisma.treatment.findMany({
+      select: { category: true },
+      distinct: ['category'],
+      where: { category: { not: null } },
+      orderBy: { category: 'asc' },
+    });
+
+    return treatments.map((t) => t.category).filter(Boolean) as string[];
+  }
 
   async findBySalon(salonId: string, pagination: PaginationQueryDto) {
     const [treatments, total] = await Promise.all([

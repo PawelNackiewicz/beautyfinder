@@ -6,7 +6,7 @@ import { PaginationQueryDto } from '../common';
 
 @Controller('salons')
 export class SalonController {
-  constructor(private readonly salonService: SalonService) {}
+  constructor(private readonly salonService: SalonService) { }
 
   @Get()
   findAll(@Query() pagination: PaginationQueryDto) {
