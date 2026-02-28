@@ -3,13 +3,13 @@ import Link from "next/link";
 import { Button } from "@repo/ui/components";
 import type { ThematicCollection } from "../mockData";
 
-interface ThematicCollectionsProps {
+type ThematicCollectionsProps = {
   collections: ThematicCollection[];
-}
+};
 
 export function ThematicCollections({ collections }: ThematicCollectionsProps) {
   return (
-    <section className="py-12">
+    <section className="py-12 bg-gray-50">
       <div className="container mx-auto px-4">
         <h2 className="text-2xl font-serif font-bold italic text-gray-900 mb-6">
           Kolekcje Tematyczne
@@ -19,16 +19,17 @@ export function ThematicCollections({ collections }: ThematicCollectionsProps) {
           {collections.map((collection) => (
             <div
               key={collection.id}
-              className="relative rounded-xl overflow-hidden aspect-16/10 group"
+              className="relative rounded-2xl overflow-hidden aspect-[16/10] group"
             >
               <Image
                 src={collection.imageUrl}
                 alt={collection.title}
                 fill
                 className="object-cover group-hover:scale-105 transition-transform duration-700"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
               {/* Dark overlay */}
-              <div className="absolute inset-0 bg-linear-to-t from-black/70 via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent" />
 
               {/* Content */}
               <div className="absolute inset-0 flex flex-col justify-end p-6">
@@ -42,7 +43,7 @@ export function ThematicCollections({ collections }: ThematicCollectionsProps) {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="border-amber-500 text-amber-400 hover:bg-amber-500/20 hover:text-amber-300"
+                    className="border-amber-500 text-amber-400 hover:bg-amber-500/20 hover:text-amber-300 rounded-full"
                     asChild
                   >
                     <Link href={`/kolekcja/${collection.slug}`}>

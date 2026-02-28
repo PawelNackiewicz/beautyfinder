@@ -1,4 +1,5 @@
 import { SlidersHorizontal } from "lucide-react";
+import { SiteHeader, Footer } from "components";
 import {
   SERVICE_CATEGORIES,
   SERVICE_SALONS,
@@ -10,7 +11,7 @@ import {
   ServiceHero,
   ServiceCategoryTabs,
   ServiceSalonCard,
-  MapPlaceholder,
+  SalonMap,
   TopArtists,
   BookTheLook,
   ThematicCollections,
@@ -19,6 +20,8 @@ import {
 export default function UslugaPage() {
   return (
     <div className="min-h-screen bg-white">
+      <SiteHeader />
+
       {/* Hero Section */}
       <ServiceHero
         title="Makijaż Permanentny w Twojej okolicy"
@@ -44,9 +47,9 @@ export default function UslugaPage() {
           <div className="w-full lg:w-105 shrink-0">
             {/* Header */}
             <div className="flex items-center justify-between py-4">
-              <h1 className="text-lg font-bold text-gray-900">
+              <h2 className="text-lg font-bold text-gray-900">
                 Najbliżej Ciebie
-              </h1>
+              </h2>
               <button className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors">
                 <span>Filtry</span>
                 <SlidersHorizontal className="w-4 h-4" />
@@ -61,9 +64,9 @@ export default function UslugaPage() {
             </div>
           </div>
 
-          {/* Right panel — map placeholder */}
+          {/* Right panel — interactive map */}
           <div className="hidden lg:block flex-1 py-4 sticky top-14.25 h-[calc(100vh-57px)]">
-            <MapPlaceholder />
+            <SalonMap salons={SERVICE_SALONS} />
           </div>
         </div>
       </div>
@@ -76,6 +79,8 @@ export default function UslugaPage() {
 
       {/* Kolekcje Tematyczne */}
       <ThematicCollections collections={THEMATIC_COLLECTIONS} />
+
+      <Footer />
     </div>
   );
 }

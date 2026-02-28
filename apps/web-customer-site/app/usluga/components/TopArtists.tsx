@@ -1,10 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
+import { Avatar, AvatarImage, AvatarFallback } from "@repo/ui/components";
 import type { TopArtist } from "../mockData";
 
-interface TopArtistsProps {
+type TopArtistsProps = {
   artists: TopArtist[];
-}
+};
 
 export function TopArtists({ artists }: TopArtistsProps) {
   return (
@@ -24,7 +24,7 @@ export function TopArtists({ artists }: TopArtistsProps) {
         </div>
 
         {/* Artists grid */}
-        <div className="flex gap-6 overflow-x-auto pb-2 scrollbar-hide">
+        <div className="flex gap-8 overflow-x-auto pb-2 scrollbar-hide">
           {artists.map((artist) => (
             <Link
               key={artist.id}
@@ -33,15 +33,19 @@ export function TopArtists({ artists }: TopArtistsProps) {
             >
               {/* Avatar with gold ring */}
               <div className="w-20 h-20 rounded-full p-0.5 bg-gradient-to-br from-amber-400 to-amber-600">
-                <div className="w-full h-full rounded-full overflow-hidden bg-white p-0.5">
-                  <Image
+                <Avatar className="w-full h-full">
+                  <AvatarImage
                     src={artist.avatarUrl}
                     alt={artist.name}
-                    width={80}
-                    height={80}
-                    className="w-full h-full object-cover rounded-full"
+                    className="object-cover"
                   />
-                </div>
+                  <AvatarFallback className="text-sm">
+                    {artist.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")}
+                  </AvatarFallback>
+                </Avatar>
               </div>
               {/* Name */}
               <span className="text-xs font-semibold text-gray-900 text-center group-hover:underline">
